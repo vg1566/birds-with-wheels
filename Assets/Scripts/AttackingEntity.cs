@@ -5,19 +5,19 @@ using UnityEngine;
 public abstract class AttackingEntity : Entity
 {
 
-    private int attackPower;
+    protected int attackPower;
     /// <summary>
     /// Range in tiles
     /// </summary>
-    private int range;
+    protected int range;
     /// <summary>
     /// Projectiles per second
     /// </summary>
-    private float rateOfFire;
+    protected float rateOfFire;
     /// <summary>
     /// What this entity is shooting at
     /// </summary>
-    private Entity target;
+    protected Entity target;
 
     /// <summary>
     /// Chooses a target based on proximity (for attacking towers/enemies) 

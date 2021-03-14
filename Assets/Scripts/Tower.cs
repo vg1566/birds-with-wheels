@@ -14,40 +14,7 @@ public class Tower : AttackingEntity
     float rateOfFire = 1;
 
     float elapsedTime;
-    Vector3 position;
-    GameObject target;
     GameObject player;
-
-    public int HP 
-    { 
-        get { return hp; } 
-    }
-
-    public Vector3 Position 
-    { 
-        get { return position; }
-    }
-
-    public int AttackPower
-    {
-        get { return attackPower; }
-    }
-
-    public int Range
-    {
-        get { return range; }
-    }
-
-    public float RateOfFire
-    { 
-        get { return rateOfFire; } 
-    }
-
-    public GameObject Target
-    {
-        get { return target; }
-    }
-
 
     // Start is called before the first frame update
     void Start()
@@ -63,7 +30,7 @@ public class Tower : AttackingEntity
 
     }
 
-    public void FireProjectile()
+    protected override void FireProjectile()
     {
         elapsedTime += Time.deltaTime;
         // fire a projectile when enemy is in range and when fire rate cooldown is up
@@ -85,7 +52,7 @@ public class Tower : AttackingEntity
         hp += amount;
     }
 
-    public void Die()
+    protected override void Die()
     {
         if ( hp == 0)
         {

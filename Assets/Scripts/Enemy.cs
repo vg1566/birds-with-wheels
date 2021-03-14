@@ -4,66 +4,10 @@ using UnityEngine;
 
 public class Enemy : AttackingEntity
 {	
-	public int hp;
-	public int attackPower;
-	public int rateOfFire;
-	public int range;
-	public int speed;
-
 	public float birdDropRate;
 	public float wheelDropRate;
 
 	public GameObject projectilePrefab;
-
-	//TODO FIXME might be better to be match the type of the List sent in FindTarget.
-	GameObject target;
-
-	Vector3 position;
-
-	//attackingEntity properites
-	public  int AttackPower
-	{
-		get { return 1; }
-	}
-	public float RateOfFire
-	{
-		get { return 1; }
-	}
-	public int Range
-	{
-		get { return 1; }
-	}
-	public GameObject Target
-	{
-		get { return null; }
-		set { target = value; }
-	}
-	public GameObject EntityObject
-	{
-		get
-		{
-			return this.gameObject;
-		}
-	}
-
-	//movingEntity properties
-	public int Speed
-	{
-		get { return 1; }
-	}
-
-	//entity properties
-	public int HP
-	{
-		get {return 1;}
-		set{hp = value;}
-	}
-
-	public Vector3 Position
-	{
-		get {return this.transform.position;}
-		set { position = value; }
-	}
 
 	public float X
 	{
@@ -79,34 +23,9 @@ public class Enemy : AttackingEntity
 	float lifetime = 0;
 
 	/// <summary>
-	/// Reduces the enemy's health. Kills the enemy if hp is lower than 0.
-	/// </summary>
-	/// <param name="amt">The amount of health to reduce by</param>
-	public void LoseHealth(int amt)
-	{
-		hp -= amt;
-		if(hp <= 0)
-		{
-			//for visual purposes, makes sure hp never goes below 0
-			hp = 0;
-			//kills the entity
-			Die();
-		}
-	}
-
-	/// <summary>
-	/// Increases the enemy's hp
-	/// </summary>
-	/// <param name="amt">The amount to increase its health by</param>
-	public void GainHealth(int amt)
-	{
-		hp += amt;
-	}
-
-	/// <summary>
 	/// Kills the enemy. Drops necessary drops and destroys the gameobject.
 	/// </summary>
-	public void Die()
+	protected override void Die()
 	{
 		if(Random.value > birdDropRate)
 		{
@@ -144,11 +63,11 @@ public class Enemy : AttackingEntity
 	/// <summary>
 	/// Fires a projectile at this enemy's target.
 	/// </summary>
-	public void FireProjectile()
+	protected override void FireProjectile()
 	{
 		GameObject projectileObject = Instantiate(projectilePrefab, new Vector3(this.X, this.Y), Quaternion.identity);
 		Projectile projectileEntity = projectileObject.GetComponent<Projectile>();
-		projectileEntity.target = this.target;
+		projectileEntity.target = this.target.gameObject;
 	}
 	
 	/// <summary>
