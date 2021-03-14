@@ -34,6 +34,7 @@ public class Projectile : MonoBehaviour
 		if (hitObject != null)
 		{
 			hitObject.LoseHealth(damage);
+			Destroy(this.gameObject);
 		}
 	}
 }
