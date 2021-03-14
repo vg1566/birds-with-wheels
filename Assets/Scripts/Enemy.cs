@@ -20,7 +20,7 @@ public class Enemy : AttackingEntity
 	}
 	public float Y
 	{
-		get { return this.transform.position.x; }
+		get { return this.transform.position.y; }
 		set { this.transform.position = new Vector3(this.transform.position.x, value); }
 	}
 
@@ -33,7 +33,7 @@ public class Enemy : AttackingEntity
 	{
         var drop = Instantiate(dropPrefab);
 		drop.transform.position = transform.position;
-		drop.GetComponent<Drops>().SetDropValues(Random.value > birdDropRate ? 1 : 0, Random.value > wheelDropRate ? 1 : 0);
+		drop.GetComponent<Drops>().SetDropValues(Random.value < birdDropRate ? 1 : 0, Random.value < wheelDropRate ? 1 : 0);
 
 		Destroy(gameObject);
 	}

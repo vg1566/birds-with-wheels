@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 5852791738287752422}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.749993, y: -0.57894266, z: -1.2832031}
-  m_LocalScale: {x: 7, y: 7, z: 7}
+  m_LocalScale: {x: 5.66552, y: 5.66552, z: 5.66552}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -74,7 +74,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Color: {r: 1, g: 0, b: 0.87176275, a: 1}
+  m_Color: {r: 1, g: 0, b: 0.08282852, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -146,11 +146,12 @@ MonoBehaviour:
   hp: 2
   speed: 1
   attackPower: 1
-  range: 800
+  range: 3
   rateOfFire: 1
-  birdDropRate: 0
-  wheelDropRate: 0
+  birdDropRate: 0.5
+  wheelDropRate: 0.5
   projectilePrefab: {fileID: 3213211799076024093, guid: 2bf496f206117b649bd55f91e1cf1df4,
     type: 3}
   dropPrefab: {fileID: 6451490918099090224, guid: 67815402319b74d4a831dae1d8d7f11d,
     type: 3}
+  mapManager: {fileID: 0}

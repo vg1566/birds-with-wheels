@@ -20,6 +20,11 @@ public class Projectile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		if(target == null)
+        {
+			Destroy(gameObject);
+        }
+
 		//get target position
 		targetPos = target.transform.position;
 		//point at target
