@@ -4,15 +4,17 @@ using UnityEngine;
 
 public abstract class AttackingEntity : Entity
 {
-
+    [SerializeField]
     protected int attackPower;
     /// <summary>
     /// Range in tiles
     /// </summary>
+    [SerializeField]
     protected int range;
     /// <summary>
     /// Projectiles per second
     /// </summary>
+    [SerializeField]
     protected float rateOfFire;
     /// <summary>
     /// What this entity is shooting at
@@ -26,21 +28,22 @@ public abstract class AttackingEntity : Entity
     /// <param name="possibleTargets">List of possible targets</param>
     public virtual void FindTarget(List<Entity> possibleTargets)
     {
-        Entity closest = null;
+        Entity possibleTarget = null;
+        target = null;
 
         for (int i = 0; i < possibleTargets.Count; i++)
         {
-            float distToTarget = Vector3.Distance(target.transform.position, transform.position);
+            possibleTarget = possibleTargets[i];
+            if (possibleTarget == null) continue;
+            float distToTarget = Vector3.Distance(possibleTarget.transform.position, transform.position);
 
             // If the target is in range, set and break
             if (distToTarget <= range)
             {
-                target = possibleTargets[i];
+                target = possibleTarget;
                 break;
             }
         }
-
-        target = closest;
     }
     /// <summary>
     /// Fires a projectile from this entity's position towards Target

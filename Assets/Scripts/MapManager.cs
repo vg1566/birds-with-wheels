@@ -45,18 +45,21 @@ public enum MapTiles
 public class MapManager : MonoBehaviour
 {
     // All the towers in the scene
-    private List<Tower> towers;
+    private List<Entity> towers;
     // All the waves in the game
-    private Stack<Enemy> waves;
+    private Stack<Stack<Enemy>> waves;
     // The enemies that will be spawned into the level
     private Stack<Enemy> currentWave;
     // The enemies that are already spawned into the level
     // TODO: assess if we need this
-    private List<Enemy> enemiesOnScreen;
+    private List<Entity> enemiesOnScreen;
     // The player avatar
-    private Avatar avatar;
+    public Avatar avatar;
     // Parent Transform to any created towers
     private Transform towerContainer;
+
+    [SerializeField]
+    private GameObject enemyPrefab;
 
     // Only using for testing, delete when done!
     [SerializeField]
@@ -86,11 +89,11 @@ public class MapManager : MonoBehaviour
     // This is how the map will be generated
     private readonly int[,] mapOutline =
     {
-            { 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0 },
-            { 1, 1, 1, 1, 2 },
-            { 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0 }
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2 },
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
     };
 
     // Start is called before the first frame update
@@ -104,27 +107,58 @@ public class MapManager : MonoBehaviour
 
         towerContainer = new GameObject("Towers").transform;
 
-        enemiesOnScreen = new List<Enemy>();
-        towers = new List<Tower>();
+        enemiesOnScreen = new List<Entity>();
+        towers = new List<Entity>();
         currentWave = new Stack<Enemy>();
-        waves = new Stack<Enemy>();
+
+        #region First wave
+        Stack<Enemy> firstWave = new Stack<Enemy>();
+        firstWave.Push(enemyPrefab.GetComponent<Enemy>());
+        firstWave.Push(enemyPrefab.GetComponent<Enemy>());
+        firstWave.Push(enemyPrefab.GetComponent<Enemy>());
+        firstWave.Push(enemyPrefab.GetComponent<Enemy>());
+        #endregion
+
+        waves = new Stack<Stack<Enemy>>();
+        waves.Push(firstWave);
 
         // Generate the map based on mapOutline
         mapGrid = new KeyValuePair<MapTiles, GameObject>[mapOutline.GetLength(0), mapOutline.GetLength(1)];
         GenerateMap();
+
+        StartWave();
     }
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        // Just for testing
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //    PlaceTower(mouseWorldPosition, TowerType.Basic);
+        //}
+        //if (Input.GetMouseButtonDown(1))
+        //{
+        //    Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //    RemoveTower(mouseWorldPosition);
+        //}
+
+        // Find a target for all towers and enemies
+        for (int i = 0; i < towers.Count; i++)
         {
-            Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            PlaceTower(mouseWorldPosition, TowerType.Basic);
+            ((Tower)towers[i]).FindTarget(enemiesOnScreen);
         }
-        if (Input.GetMouseButtonDown(1))
+        for (int i = 0; i < enemiesOnScreen.Count; i++)
         {
-            Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RemoveTower(mouseWorldPosition);
+            // Make sure the enemy is alive before finding a target
+            if (((Enemy)enemiesOnScreen[i]) == null)
+            {
+                enemiesOnScreen.RemoveAt(i);
+                i--;
+                continue;
+            } 
+
+            ((Enemy)enemiesOnScreen[i]).FindTarget(towers);
         }
     }
 
@@ -140,8 +174,8 @@ public class MapManager : MonoBehaviour
     {
         // TODO: Get Enemy class and set enemies stack 
         // to whatever we want the wave to look like
-        // currentWave = waves.Pop();
-        // StartCoroutine(SpawnEnemy());
+        currentWave = waves.Pop();
+        StartCoroutine(SpawnEnemy());
     }
 
     /// <summary>
@@ -197,6 +231,7 @@ public class MapManager : MonoBehaviour
                         break;
                     case MapTiles.Base:
                         newMapSquare = Instantiate(baseTile, mapParent.transform);
+                        newMapSquare.GetComponent<Base>().mapManager = gameObject;
                         break;
                     default:
                         throw new InvalidOperationException(
@@ -245,11 +280,15 @@ public class MapManager : MonoBehaviour
         newTower.transform.position = GetPositionAtMapCoordinate(x, y)
             + new Vector3(0, 0, -1);
 
+        // Grab tower component
+        Tower towerScript = newTower.GetComponent<Tower>();
+
         // Name it accordingly
         newTower.name = $"{towerType.ToString()} tower at position {x}, {y}.";
 
         // Add the new tower to the list of towers
-        towers.Add(newTower.GetComponent<Tower>());
+        towers.Add(towerScript);
+        towerScript.SetMapManager(this);
 
         // Update mapGrid to reflect new tower
         mapGrid[y, x] = new KeyValuePair<MapTiles, GameObject>(MapTiles.Tower, newTower);
@@ -273,6 +312,7 @@ public class MapManager : MonoBehaviour
     /// <param name="dropResources">Whether this tower should drop anything</param>
     public void RemoveTower(int x, int y, bool dropResources = false)
     {
+        towers.Remove(mapGrid[y, x].Value.GetComponent<Tower>());
         Destroy(mapGrid[y, x].Value);
 
         // Replace the mapGrid square with the empty one under it
@@ -289,7 +329,11 @@ public class MapManager : MonoBehaviour
         yield return new WaitForSeconds(secondsPerEnemy);
 
         // Spawn a new enemy after waiting secondsPerEnemy seconds
-        enemiesOnScreen.Add(currentWave.Pop());
+        
+        GameObject newEnemy = Instantiate(currentWave.Pop().gameObject);
+        newEnemy.transform.position = mapGrid[2, 0].Value.transform.position;
+        enemiesOnScreen.Add(newEnemy.GetComponent<Enemy>());
+        
 
         // Only continue to spawn enemies 
         // if there are more to spawn.

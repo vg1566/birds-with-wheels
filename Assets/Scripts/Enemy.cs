@@ -9,6 +9,10 @@ public class Enemy : AttackingEntity
 
 	public GameObject projectilePrefab;
 
+	public GameObject dropPrefab;
+
+	public MapManager mapManager;
+
 	public float X
 	{
 		get{ return this.transform.position.x; }
@@ -27,17 +31,11 @@ public class Enemy : AttackingEntity
 	/// </summary>
 	protected override void Die()
 	{
-		if(Random.value > birdDropRate)
-		{
-			//drop a birb
-			//Instantiate(BirdDropPrefab, new Vector3(this.X, this.Y));
-		}
-		if (Random.value > wheelDropRate)
-		{
-			//drop a wheel
-			//Instantiate(WheelDropPrefab, new Vector3(this.X, this.Y));
-		}
-		Destroy(this.gameObject);
+        var drop = Instantiate(dropPrefab);
+		drop.transform.position = transform.position;
+		drop.GetComponent<Drops>().SetDropValues(Random.value > birdDropRate ? 1 : 0, Random.value > wheelDropRate ? 1 : 0);
+
+		Destroy(gameObject);
 	}
 
 	/// TODO fixme list type has been changed to gameobject to match
@@ -50,6 +48,8 @@ public class Enemy : AttackingEntity
 		// sort
 		List<Entity> sortedTargets = targets;
 		sortedTargets.Sort(SortByDistanceToTarget);
+		// TODO: once mapmanager is sorted out
+		//sortedTargets.Insert(0, mapManager.avatar);
 		base.FindTarget(sortedTargets);
 
 		int SortByDistanceToTarget(Entity e1, Entity e2)
@@ -59,7 +59,7 @@ public class Enemy : AttackingEntity
 					- Vector3.Distance(e2.transform.position, transform.position));
 		}
 	}
-	
+
 	/// <summary>
 	/// Fires a projectile at this enemy's target.
 	/// </summary>
@@ -67,6 +67,7 @@ public class Enemy : AttackingEntity
 	{
 		GameObject projectileObject = Instantiate(projectilePrefab, new Vector3(this.X, this.Y), Quaternion.identity);
 		Projectile projectileEntity = projectileObject.GetComponent<Projectile>();
+		projectileEntity.damage = attackPower;
 		projectileEntity.target = this.target.gameObject;
 	}
 	
@@ -78,7 +79,7 @@ public class Enemy : AttackingEntity
 	{
 		//TODO
 		//goes left across the screen
-		transform.Translate(new Vector3(1, 0, 0) * speed);
+		transform.Translate(new Vector3(1, 0, 0) * speed * Time.deltaTime);
 	}
 
 	// Start is called before the first frame update
@@ -86,19 +87,19 @@ public class Enemy : AttackingEntity
     {
 		lifetime = Time.time;
     }
-	
-    // Update is called once per frame
+
+	// Update is called once per frame
+	private float elapsedTime;
     void Update()
     {
-		//gets current time
-		lifetime = Time.time;
 		//moves
 		Move();
-		//if it is time to shoot and a target exists
-		if(Mathf.Floor(lifetime % rateOfFire) == 0 && target != null) //&& target.isdead)
+
+		elapsedTime += Time.deltaTime;
+		if (target != null && elapsedTime > rateOfFire)
 		{
-			//shoot
 			FireProjectile();
+			elapsedTime = 0f;
 		}
 	}
 }

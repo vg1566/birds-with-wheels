@@ -18,6 +18,7 @@ public class Base : Entity
 
     public float respawnTimer = 0;
     private float totalRespawnTime = 2;
+    [HideInInspector]
     public bool respawning = false;
     private bool gameOver = false;
 
@@ -28,7 +29,12 @@ public class Base : Entity
     // Start is called before the first frame update
     void Start()
     {
-        
+        currentAvatar = Instantiate(avatarPrefab, transform.position, Quaternion.identity);
+        currentAvatar.GetComponent<Avatar>().playerBase = gameObject;
+        currentAvatar.GetComponent<Avatar>().numBirds += numBirds;
+        currentAvatar.GetComponent<Avatar>().numWheels += numWheels;
+        currentAvatar.GetComponent<Avatar>().mapManager = mapManager;
+        currentAvatar.transform.position += new Vector3(0, 0, -3);
     }
 
     // Update is called once per frame

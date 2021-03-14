@@ -9,7 +9,9 @@ public class Tower : AttackingEntity
     float elapsedTime;
     GameObject player;
     GameObject baseVar;
-    bool isSpecial = false;
+    public bool isSpecial = false;
+
+    MapManager mapManager;
 
     // Start is called before the first frame update
     void Start()
@@ -22,11 +24,16 @@ public class Tower : AttackingEntity
     void Update()
     {
         elapsedTime += Time.deltaTime;
-        if (Vector3.Distance(target.transform.position, transform.position) <= range && elapsedTime > rateOfFire)
+        if (target != null && elapsedTime > rateOfFire)
         {
             FireProjectile();
             elapsedTime = 0f;
         }
+    }
+
+    public void SetMapManager(MapManager mm)
+    {
+        mapManager = mm;
     }
 
     protected override void FireProjectile()
@@ -34,20 +41,18 @@ public class Tower : AttackingEntity
         // Create the projectile
         GameObject projectileObject = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
         Projectile projectileEntity = projectileObject.GetComponent<Projectile>();
+        projectileEntity.damage = attackPower;
         projectileEntity.target = this.target.gameObject;
 
     }
 
     protected override void Die()
     {
-        if ( hp == 0)
-        {
-            Destroy(gameObject);          
-        }
         if (isSpecial)
         {
             baseVar.GetComponent<Base>().StartRespawn();
         }
-       
+
+        mapManager.RemoveTower(transform.position);
     }
 }

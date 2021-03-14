@@ -8,6 +8,9 @@ public class Drops : MonoBehaviour
     float speed = 5f;
     [SerializeField]
     float attractRange = 5f;
+    
+    private int birdValue = 0;
+    private int wheelValue = 0;
 
     GameObject player;
 
@@ -23,9 +26,14 @@ public class Drops : MonoBehaviour
         MoveToPlayer();
     }
 
+    public void SetDropValues(int bird, int wheel)
+    {
+        birdValue = bird;
+        wheelValue = wheel;
+    }
+
     private void MoveToPlayer()
     {
-        
         if (Vector3.Distance(player.transform.position, transform.position) <= attractRange)
         {
             transform.position = Vector3.MoveTowards(transform.position, player.transform.position, speed * Time.deltaTime);
@@ -37,6 +45,8 @@ public class Drops : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
+            player.GetComponent<Avatar>().numBirds += birdValue;
+            player.GetComponent<Avatar>().numWheels += wheelValue;
             Destroy(gameObject);
         }
     }
