@@ -4,29 +4,9 @@ using UnityEngine;
 
 // Author: Valentina Genoese-Zerbi
 // Contains all the scripting necessary for an avatar gameobject
-// Notes for github merging:
-//      Uncomment map manager comment in PlaceTower(tower towerType) and in BreakTower()
-//      Map manager must have function AddTower(Vector3 position, tower towerType)
-//      Map manager must have function RemoveTower(Vector3 position)
-public class Avatar : MonoBehaviour, MovingEntity
+public class Avatar : Entity
 {
-    public int speed = 2;
-    public int hp = 4;
     public Vector3 position = Vector3.zero;
-
-    public int Speed
-    {
-        get { return speed; }
-    }
-    public int HP
-    {
-        get { return hp; }
-    }
-    public Vector3 Position
-    {
-        get { return position; }
-    }
-
 
     public GameObject specialTower;
     public GameObject playerBase;
@@ -47,7 +27,8 @@ public class Avatar : MonoBehaviour, MovingEntity
     // Start is called before the first frame update
     void Start()
     {
-        position = transform.position;
+        position = playerBase.transform.position;
+        transform.position = position;
         Debug.Log(wheelCosts.Length);
     }
 
@@ -58,29 +39,9 @@ public class Avatar : MonoBehaviour, MovingEntity
     }
 
     /// <summary>
-    /// Lose some amount of health
-    /// </summary>
-    public void LoseHealth(int amount)
-    {
-        hp -= amount;
-        if(hp <= 0)
-        {
-            Die();
-        }
-    }
-
-    /// <summary>
-    /// Gain some amount of health
-    /// </summary>
-    public void GainHealth(int amount)
-    {
-        hp += amount;
-    }
-
-    /// <summary>
     /// Tells the base it needs to respawn and deletes itself. The base gets resource amounts to keep track of
     /// </summary>
-    public void Die()
+    protected override void Die()
     {
         playerBase.GetComponent<Base>().StartRespawn(numBirds, numWheels);
         Destroy(gameObject);
@@ -122,8 +83,7 @@ public class Avatar : MonoBehaviour, MovingEntity
         {
             numBirds -= birdcosts[intTower];
             numWheels -= wheelCosts[intTower];
-            //Debug.Log("Added tower " + towerType);
-            //mapManager.GetComponent<MapManager>().AddTower(position, towerType);
+            mapManager.GetComponent<MapManager>().PlaceTower(position, towerType);
         }
     }
 
@@ -143,7 +103,7 @@ public class Avatar : MonoBehaviour, MovingEntity
     /// </summary>
     public void BreakTower()
     {
-        //mapManager.GetComponent<MapManager>().RemoveTower(position);
+        mapManager.GetComponent<MapManager>().RemoveTower(position);
     }
 
     /// <summary>
