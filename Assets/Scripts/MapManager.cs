@@ -62,7 +62,7 @@ public class MapManager : MonoBehaviour
     [SerializeField]
     private GameObject towerTest;
 
-    private Dictionary<tower, GameObject> towerPrefabs;
+    private Dictionary<TowerType, GameObject> towerPrefabs;
 
     // Prefabs used to generate the map from the below array
     [SerializeField]
@@ -96,10 +96,10 @@ public class MapManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        towerPrefabs = new Dictionary<tower, GameObject> 
+        towerPrefabs = new Dictionary<TowerType, GameObject> 
         {
-            { tower.Basic, towerTest },
-            { tower.Special, towerTest }
+            { TowerType.Basic, towerTest },
+            { TowerType.Special, towerTest }
         };
 
         towerContainer = new GameObject("Towers").transform;
@@ -119,7 +119,7 @@ public class MapManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            PlaceTower(mouseWorldPosition, tower.Basic);
+            PlaceTower(mouseWorldPosition, TowerType.Basic);
         }
         if (Input.GetMouseButtonDown(1))
         {
@@ -218,7 +218,7 @@ public class MapManager : MonoBehaviour
     /// </summary>
     /// <param name="position">World position to place the tower at</param>
     /// <param name="towerType">The type  of tower to place</param>
-    public void PlaceTower(Vector3 position, tower towerType)
+    public void PlaceTower(Vector3 position, TowerType towerType)
     {
         Vector2Int mapCoords = GetMapCoordinateAtWorldPosition(position);
         PlaceTower(mapCoords.x, mapCoords.y, towerType);
@@ -230,7 +230,7 @@ public class MapManager : MonoBehaviour
     /// <param name="x">X map coord</param>
     /// <param name="y">Y map coord</param>
     /// <param name="towerType">The tower to place</param>
-    public void PlaceTower(int x, int y, tower towerType)
+    public void PlaceTower(int x, int y, TowerType towerType)
     {
         // If the map space is not empty, don't place a tower
         if (mapGrid[y, x].Key != MapTiles.Empty)

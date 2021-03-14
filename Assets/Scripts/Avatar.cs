@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum TowerType
+{
+    Basic,
+    Special
+}
+
 // Author: Valentina Genoese-Zerbi
 // Contains all the scripting necessary for an avatar gameobject
 public class Avatar : Entity
@@ -13,12 +19,6 @@ public class Avatar : Entity
     public GameObject mapManager;
     public int numWheels = 0;
     public int numBirds = 0;
-
-    public enum tower
-    {
-        Basic,
-        Special
-    }
 
     // Stores costs of tower types at the index of the enum value. e.g. a tower.Basic tower costs birdCosts[tower.Basic] birds and wheelCosts[tower.Basic] wheels
     public int[] birdcosts = { 1, 0 };
@@ -72,13 +72,13 @@ public class Avatar : Entity
         position += direction.normalized * speed * Time.deltaTime;
         transform.position = position;
     }
-    
+
     /// <summary>
     /// Checks for enough resources, then subtracts the relevant amount, and sends the tower type and position to the map manager
     /// </summary>
-    public void PlaceTower(tower towerType)
+    public void PlaceTower(TowerType towerType)
     {
-        int intTower = (int) towerType;
+        int intTower = (int)towerType;
         if (numBirds >= birdcosts[intTower] && numWheels >= wheelCosts[intTower])
         {
             numBirds -= birdcosts[intTower];
@@ -93,7 +93,7 @@ public class Avatar : Entity
     /// </summary>
     public void TransformIntoTower()
     {
-        PlaceTower(tower.Special);
+        PlaceTower(TowerType.Special);
         playerBase.GetComponent<Base>().StartGUI(numBirds, numWheels);
         Destroy(gameObject);
     }
@@ -123,11 +123,11 @@ public class Avatar : Entity
         }
         if (GUILayout.Button("Transform into special tower"))
         {
-            PlaceTower(tower.Special);
+            PlaceTower(TowerType.Special);
         }
         if (GUILayout.Button("Place basic tower"))
         {
-            PlaceTower(tower.Basic);
+            PlaceTower(TowerType.Basic);
         }
         if (GUILayout.Button("Lose Health"))
         {
