@@ -4,6 +4,7 @@ using UnityEngine;
 
 public interface AttackingEntity : Entity
 {
+
     int AttackPower { get; }
     /// <summary>
     /// Range in tiles
