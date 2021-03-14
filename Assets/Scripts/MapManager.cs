@@ -56,7 +56,7 @@ public class MapManager : MonoBehaviour
     // TODO: assess if we need this
     private List<AttackingEntity> enemiesOnScreen;
     // The player avatar
-    private MovingEntity avatar;
+    private Avatar avatar;
     // Parent Transform to any created towers
     private Transform towerContainer;
 

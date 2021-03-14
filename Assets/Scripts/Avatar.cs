@@ -8,7 +8,7 @@ using UnityEngine;
 //      Uncomment map manager comment in PlaceTower(tower towerType) and in BreakTower()
 //      Map manager must have function AddTower(Vector3 position, tower towerType)
 //      Map manager must have function RemoveTower(Vector3 position)
-public class Avatar : MonoBehaviour, MovingEntity
+public class Avatar : MonoBehaviour
 {
     public int speed = 2;
     public int hp = 4;
