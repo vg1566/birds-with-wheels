@@ -4,7 +4,9 @@ using UnityEngine;
 
 public interface Entity
 {
-    int HP { get; }
+	GameObject EntityObject { get; }
+
+	int HP { get; }
     /// <summary>
     /// Returns the transform.position of the Entity
     /// </summary>
