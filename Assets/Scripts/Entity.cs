@@ -4,9 +4,10 @@ using UnityEngine;
 
 public abstract class Entity : MonoBehaviour
 {
+    [SerializeField]
     protected int hp;
     [SerializeField]
-    protected int speed = 0;
+    protected float speed = 0;
 
     /// <summary>
     /// Subtracts amount from this Entity's HP
