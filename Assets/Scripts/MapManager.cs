@@ -14,7 +14,6 @@ using UnityEngine;
 ///   <list type="number">
 ///     <item>Player</item>
 ///     <item>Tower</item>
-///     <item>Enemy</item>
 ///   </list>
 /// </summary>
 public enum MapTiles
@@ -25,7 +24,6 @@ public enum MapTiles
 
     Player = 99,
     Tower = 98,
-    Enemy = 97
 }
 
 /// <summary>
@@ -39,7 +37,7 @@ public enum MapTiles
 ///       <item>Generating the map using <see cref="GenerateMap"/></item>
 ///       <item>Spawning waves of enemies from <see cref="currentWave"/></item>
 ///       <item>Storing future waves that will be spawned in <see cref="waves"/></item>
-///       <item>Keeping track of where everything is on the map in <see cref="mapGrid"/></item>
+///       <item>Keeping track of where everything is on the map in <see cref="mapOutline"/></item>
 ///       <item>Handling and validating tower placement in <see cref="PlaceTower(GameObject, int, int)"/></item>
 ///     </list>
 ///   </para>
@@ -47,14 +45,14 @@ public enum MapTiles
 public class MapManager : MonoBehaviour
 {
     // All the towers in the scene
-    private List<AttackingEntity> towers;
+    private List<Tower> towers;
     // All the waves in the game
-    private Stack<AttackingEntity> waves;
+    private Stack<Enemy> waves;
     // The enemies that will be spawned into the level
-    private Stack<AttackingEntity> currentWave;
+    private Stack<Enemy> currentWave;
     // The enemies that are already spawned into the level
     // TODO: assess if we need this
-    private List<AttackingEntity> enemiesOnScreen;
+    private List<Enemy> enemiesOnScreen;
     // The player avatar
     private Avatar avatar;
     // Parent Transform to any created towers
@@ -63,6 +61,8 @@ public class MapManager : MonoBehaviour
     // Only using for testing, delete when done!
     [SerializeField]
     private GameObject towerTest;
+
+    private Dictionary<tower, GameObject> towerPrefabs;
 
     // Prefabs used to generate the map from the below array
     [SerializeField]
@@ -81,44 +81,50 @@ public class MapManager : MonoBehaviour
     private float secondsPerEnemy = 1;
 
     // The map, represented as ints based on the MapSquares enum
-    private int[,] mapGrid =
+    private KeyValuePair<MapTiles, GameObject>[,] mapGrid;
+
+    // This is how the map will be generated
+    private readonly int[,] mapOutline =
     {
-        { 0, 0, 0, 0, 0 },
-        { 0, 0, 0, 0, 0 },
-        { 1, 1, 1, 1, 2 },
-        { 0, 0, 0, 0, 0 },
-        { 0, 0, 0, 0, 0 }
+            { 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 0 },
+            { 1, 1, 1, 1, 2 },
+            { 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 0 }
     };
 
     // Start is called before the first frame update
     void Start()
     {
-        towerContainer = new GameObject("Towers").transform;
-        enemiesOnScreen = new List<AttackingEntity>();
+        towerPrefabs = new Dictionary<tower, GameObject> 
+        {
+            { tower.Basic, towerTest },
+            { tower.Special, towerTest }
+        };
 
+        towerContainer = new GameObject("Towers").transform;
+
+        enemiesOnScreen = new List<Enemy>();
+        towers = new List<Tower>();
+        currentWave = new Stack<Enemy>();
+        waves = new Stack<Enemy>();
+
+        // Generate the map based on mapOutline
+        mapGrid = new KeyValuePair<MapTiles, GameObject>[mapOutline.GetLength(0), mapOutline.GetLength(1)];
         GenerateMap();
     }
 
     private void Update()
     {
-        // Tower placement tests
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetMouseButtonDown(0))
         {
-            // Valid, bottom left
-            PlaceTower(towerTest, 0, 0);
+            Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            PlaceTower(mouseWorldPosition, tower.Basic);
         }
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetMouseButtonDown(1))
         {
-            // Valid, top right
-            PlaceTower(
-                towerTest, 
-                mapGrid.GetLength(1) - 1, 
-                mapGrid.GetLength(0) - 1);
-        }
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            // Invalid, on a path
-            PlaceTower(towerTest, 2, 2);
+            Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            RemoveTower(mouseWorldPosition);
         }
     }
 
@@ -149,6 +155,19 @@ public class MapManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Returns the map coordinate that corresponds to the given world position
+    /// </summary>
+    /// <param name="position">The world position that you want map coords for</param>
+    /// <returns>The proper map coordinates based on given position</returns>
+    private Vector2Int GetMapCoordinateAtWorldPosition(Vector3 position)
+    {
+        // TODO: reflect changes that occur once sprites are implemented instead of boxes.
+        return new Vector2Int(
+            Mathf.RoundToInt(position.x),
+            Mathf.RoundToInt(position.y));
+    }
+
+    /// <summary>
     /// Generates the map using the <see cref="mapGrid"/> and 
     /// the various tile types
     /// </summary>
@@ -165,7 +184,7 @@ public class MapManager : MonoBehaviour
             {
                 // Get the current map square and create an object of 
                 // the proper type
-                var mapSquareType = (MapTiles)mapGrid[i, j];
+                var mapSquareType = (MapTiles)mapOutline[i, j];
 
                 GameObject newMapSquare;
                 switch (mapSquareType)
@@ -181,41 +200,83 @@ public class MapManager : MonoBehaviour
                         break;
                     default:
                         throw new InvalidOperationException(
-                            $"Invalid map square specified : '{mapGrid[i,j]}' at coordinate {i}, {j}");
+                            $"Invalid map square specified : '{mapGrid[i, j]}' at coordinate {i}, {j}");
                 }
 
                 // Set position and name
                 newMapSquare.transform.position = new Vector3(j, i);
                 newMapSquare.name += $" at index {i}, {j}";
+
+                // Add the new tile to the mapGrid
+                mapGrid[i, j] = new KeyValuePair<MapTiles, GameObject>(mapSquareType, newMapSquare);
             }
         }
     }
 
-    // Note: tower param is a GameObject right now, will probably 
-    // want to change that to a Tower script or something
+    /// <summary>
+    /// Places a tower at the given world position
+    /// </summary>
+    /// <param name="position">World position to place the tower at</param>
+    /// <param name="towerType">The type  of tower to place</param>
+    public void PlaceTower(Vector3 position, tower towerType)
+    {
+        Vector2Int mapCoords = GetMapCoordinateAtWorldPosition(position);
+        PlaceTower(mapCoords.x, mapCoords.y, towerType);
+    }
+
     /// <summary>
     /// Places a tower at the specified map coordinate (not world position)
     /// </summary>
-    /// <param name="tower">The tower to place</param>
     /// <param name="x">X map coord</param>
     /// <param name="y">Y map coord</param>
-    private void PlaceTower(GameObject tower, int x, int y)
+    /// <param name="towerType">The tower to place</param>
+    public void PlaceTower(int x, int y, tower towerType)
     {
         // If the map space is not empty, don't place a tower
-        if (mapGrid[y, x] != (int)MapTiles.Empty)
+        if (mapGrid[y, x].Key != MapTiles.Empty)
         {
             // TODO: Give player feedback that tower placement failed
             Debug.Log("Tower placement failed");
             return;
         }
 
-        GameObject newTower = Instantiate(tower, towerContainer);
+        // Make a new tower of the specified type, at the correct map position
+        GameObject newTower = Instantiate(towerPrefabs[towerType], towerContainer);
         newTower.transform.position = GetPositionAtMapCoordinate(x, y)
             + new Vector3(0, 0, -1);
-        newTower.name = $"TowerType tower at position {x}, {y}.";
+
+        // Name it accordingly
+        newTower.name = $"{towerType.ToString()} tower at position {x}, {y}.";
+
+        // Add the new tower to the list of towers
+        towers.Add(newTower.GetComponent<Tower>());
 
         // Update mapGrid to reflect new tower
-        mapGrid[y, x] = (int)MapTiles.Tower;
+        mapGrid[y, x] = new KeyValuePair<MapTiles, GameObject>(MapTiles.Tower, newTower);
+    }
+
+    /// <summary>
+    /// Removes tower at the given world position
+    /// </summary>
+    /// <param name="position">World position of the tower to remove</param>
+    public void RemoveTower(Vector3 position)
+    {
+        Vector2Int mapCoords = GetMapCoordinateAtWorldPosition(position);
+        RemoveTower(mapCoords.x, mapCoords.y);
+    }
+    
+    /// <summary>
+    /// Removes the tower at map coordinate x, y
+    /// </summary>
+    /// <param name="x">X coord of the tower in map coords</param>
+    /// <param name="y">Y coord of the tower in map coords</param>
+    /// <param name="dropResources">Whether this tower should drop anything</param>
+    public void RemoveTower(int x, int y, bool dropResources = false)
+    {
+        Destroy(mapGrid[y, x].Value);
+
+        // Replace the mapGrid square with the empty one under it
+        mapGrid[y, x] = new KeyValuePair<MapTiles, GameObject>(MapTiles.Empty, GameObject.Find($"Empty at index {y}, {x}"));
     }
 
     /// <summary>
