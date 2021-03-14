@@ -4,65 +4,50 @@ using UnityEngine;
 
 public class Tower : AttackingEntity
 {
-    [SerializeField]
-    int hp = 5;
-    [SerializeField]
-    int attackPower = 1;
-    [SerializeField]
-    int range = 5;
-    [SerializeField]
-    float rateOfFire = 1;
+    public GameObject projectilePrefab;
 
     float elapsedTime;
     GameObject player;
+    GameObject baseVar;
+    bool isSpecial = false;
 
     // Start is called before the first frame update
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
+        baseVar = GameObject.Find("Base");
     }
 
     // Update is called once per frame
     void Update()
     {
-        //FindTarget();
-        FireProjectile();
-
-    }
-
-    protected override void FireProjectile()
-    {
         elapsedTime += Time.deltaTime;
-        // fire a projectile when enemy is in range and when fire rate cooldown is up
-        if (Vector3.Distance(target.transform.position, position) <= range && elapsedTime > rateOfFire)
+        if (Vector3.Distance(target.transform.position, transform.position) <= range && elapsedTime > rateOfFire)
         {
-            // Create the projectile
-            //Projectile newProjectile = Instantiate(projectile, position, Quaternion.identity);
+            FireProjectile();
             elapsedTime = 0f;
         }
     }
 
-    public void LoseHealth(int amount)
+    protected override void FireProjectile()
     {
-        hp -= amount;
-    }
+        // Create the projectile
+        GameObject projectileObject = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
+        Projectile projectileEntity = projectileObject.GetComponent<Projectile>();
+        projectileEntity.target = this.target.gameObject;
 
-    public void GainHealth(int amount)
-    {
-        hp += amount;
     }
 
     protected override void Die()
     {
         if ( hp == 0)
         {
-            // Destroy is not coming up for some reason?
-            //Destroy(gameObject);
-
-            // Adding resources
-            //player.numWheels += 1;
-            //player.numBirds += 1;
-
+            Destroy(gameObject);          
         }
+        if (isSpecial)
+        {
+            baseVar.GetComponent<Base>().StartRespawn();
+        }
+       
     }
 }
