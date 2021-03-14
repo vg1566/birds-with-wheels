@@ -2,31 +2,48 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface AttackingEntity : Entity
+public abstract class AttackingEntity : Entity
 {
 
-    int AttackPower { get; }
+    private int attackPower;
     /// <summary>
     /// Range in tiles
     /// </summary>
-    int Range { get; }
+    private int range;
     /// <summary>
     /// Projectiles per second
     /// </summary>
-    float RateOfFire { get; }
+    private float rateOfFire;
     /// <summary>
     /// What this entity is shooting at
     /// </summary>
-    GameObject Target { get; }
+    private Entity target;
 
     /// <summary>
     /// Chooses a target based on proximity (for attacking towers/enemies) 
     /// or priority (enemies prioritize the avatar)
     /// </summary>
     /// <param name="possibleTargets">List of possible targets</param>
-    void FindTarget(List<Entity> possibleTargets);
+    public virtual void FindTarget(List<Entity> possibleTargets)
+    {
+        Entity closest = null;
+
+        for (int i = 0; i < possibleTargets.Count; i++)
+        {
+            float distToTarget = Vector3.Distance(target.transform.position, transform.position);
+
+            // If the target is in range, set and break
+            if (distToTarget <= range)
+            {
+                target = possibleTargets[i];
+                break;
+            }
+        }
+
+        target = closest;
+    }
     /// <summary>
     /// Fires a projectile from this entity's position towards Target
     /// </summary>
-    void FireProjectile();
+    protected abstract void FireProjectile();
 }

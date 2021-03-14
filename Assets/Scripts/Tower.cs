@@ -63,35 +63,6 @@ public class Tower : AttackingEntity
 
     }
 
-    public void FindTarget(List<Entity> possibleTargets)
-    {
-        Entity closest = null;
-        foreach (Entity enemy in possibleTargets)
-        {
-            // if enemy is dead just continue past it
-            // if (enemy.isDead == true) continue;
-            // set first enemy found to closest enemey
-            if (Vector3.Distance(enemy.Position, position) <= range)
-            {
-                if (closest == null)
-                {
-                    closest = enemy;
-                }
-                else
-                {
-                    // if a new enemy is closer than the current set closest then set the new enemy to be closest
-                    if (Vector3.Distance(enemy.Position, position) < Vector3.Distance(closest.Position, position))
-                    {
-                        closest = enemy;
-                    }
-                }
-            }
-        }
-
-        // not sure how to convert type Entity of closest to gameObject, .gameObject is not appearing
-        //target = closest;
-    }
-
     public void FireProjectile()
     {
         elapsedTime += Time.deltaTime;

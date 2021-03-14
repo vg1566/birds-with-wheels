@@ -2,29 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface Entity
+public abstract class Entity : MonoBehaviour
 {
-	GameObject EntityObject { get; }
-
-	int HP { get; }
-    /// <summary>
-    /// Returns the transform.position of the Entity
-    /// </summary>
-    Vector3 Position { get; }
+    private int hp;
 
     /// <summary>
     /// Subtracts amount from this Entity's HP
     /// </summary>
     /// <param name="amount">The amount of HP to lose</param>
-    void LoseHealth(int amount);
+    public void LoseHealth(int amount)
+    {
+        hp -= amount;
+        if (hp <= 0)
+        {
+            //for visual purposes, makes sure hp never goes below 0
+            hp = 0;
+            //kills the entity
+            Die();
+        }
+    }
     /// <summary>
     /// Adds amount to this Entity's HP
     /// </summary>
     /// <param name="amount">The amount of HP to gain</param>
-    void GainHealth(int amount);
+    public void GainHealth(int amount)
+    {
+        hp += amount;
+    }
     /// <summary>
     /// Does any actions needed when this Entity dies
     /// (ex. Enemies drop)
     /// </summary>
-    void Die();
+    protected abstract void Die();
 }

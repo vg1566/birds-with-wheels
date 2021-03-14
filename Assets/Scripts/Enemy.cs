@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour, MovingEntity, AttackingEntity
+public class Enemy : AttackingEntity
 {	
 	public int hp;
 	public int attackPower;
@@ -126,24 +126,18 @@ public class Enemy : MonoBehaviour, MovingEntity, AttackingEntity
 	/// Finds a target tower. Must be called from MapManager.
 	/// </summary>
 	/// <param name="targets">An array of all towers on the map</param>
-	public void FindTarget(List<Entity> targets)
+	public override void FindTarget(List<Entity> targets)
 	{
-		//targets must be in range.
-		float distance = range;
+		// sort
+		List<Entity> sortedTargets = targets;
+		sortedTargets.Sort(SortByDistanceToTarget);
+		base.FindTarget(sortedTargets);
 
-		Target = null;
-
-		foreach (Entity e in targets)
+		int SortByDistanceToTarget(Entity e1, Entity e2)
 		{
-			//gets distance to possible target
-			Vector3 p1 = e.Position;
-			float curDistance = Mathf.Sqrt(Mathf.Pow(p1.x - position.x, 2) + Mathf.Pow(p1.y - position.y, 2));
-
-			if (curDistance < distance)
-			{
-				distance = curDistance;
-				Target = e.EntityObject;
-			}
+			return 
+				(int)(Vector3.Distance(e1.transform.position, transform.position)
+					- Vector3.Distance(e2.transform.position, transform.position));
 		}
 	}
 	

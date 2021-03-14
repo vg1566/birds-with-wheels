@@ -94,6 +94,7 @@ public class MapManager : MonoBehaviour
     void Start()
     {
         towerContainer = new GameObject("Towers").transform;
+        enemiesOnScreen = new List<AttackingEntity>();
 
         GenerateMap();
     }
@@ -227,7 +228,7 @@ public class MapManager : MonoBehaviour
         yield return new WaitForSeconds(secondsPerEnemy);
 
         // Spawn a new enemy after waiting secondsPerEnemy seconds
-        currentWave.Pop();
+        enemiesOnScreen.Add(currentWave.Pop());
 
         // Only continue to spawn enemies 
         // if there are more to spawn.
