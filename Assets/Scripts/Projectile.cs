@@ -27,7 +27,7 @@ public class Projectile : MonoBehaviour
 		transform.Translate(direction * speed);
     }
 
-	private void OnCollisionEnter(Collision collision)
+	private void OnTriggerEnter2D(Collider2D collision)
 	{
 		Entity hitObject = collision.gameObject.GetComponent<Entity>();
 		//makes sure it can collide with something that can take damage (i.e. not another projectile)
