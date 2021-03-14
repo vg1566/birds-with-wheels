@@ -5,20 +5,10 @@ using UnityEngine;
 // Author: Valentina Genoese-Zerbi
 // Contains all the scripting necessary for a base gameobject
 // Notes for github merging:
-//      Map manager must use base's StartGUI() when special tower is destroyed
-public class Base : MonoBehaviour, Entity
+//      Tower must use base's StartRespawn() when special tower is destroyed
+public class Base : Entity
 {
-    public int hp = 4;
     public Vector3 position = Vector3.zero;
-
-    public int HP
-    {
-        get { return hp; }
-    }
-    public Vector3 Position
-    {
-        get { return position; }
-    }
 
     private bool usingGUI = false;
     private string status = "Special Tower";
@@ -29,9 +19,11 @@ public class Base : MonoBehaviour, Entity
     public float respawnTimer = 0;
     private float totalRespawnTime = 2;
     public bool respawning = false;
+    private bool gameOver = false;
 
     public GameObject avatarPrefab;
     public GameObject currentAvatar;
+    public GameObject mapManager;
 
     // Start is called before the first frame update
     void Start()
@@ -55,35 +47,16 @@ public class Base : MonoBehaviour, Entity
                 currentAvatar.GetComponent<Avatar>().playerBase = gameObject;
                 currentAvatar.GetComponent<Avatar>().numBirds += numBirds;
                 currentAvatar.GetComponent<Avatar>().numWheels += numWheels;
+                currentAvatar.GetComponent<Avatar>().mapManager = mapManager;
                 currentAvatar.transform.position += new Vector3(0, 0, -3);
             }
         }
     }
 
     /// <summary>
-    /// Lose some amount of health
+    /// Ends game (destroys everything and displays game over message)
     /// </summary>
-    public void LoseHealth(int amount)
-    {
-        hp -= amount;
-        if (hp <= 0)
-        {
-            Die();
-        }
-    }
-
-    /// <summary>
-    /// Gain some amount of health
-    /// </summary>
-    public void GainHealth(int amount)
-    {
-        hp += amount;
-    }
-
-    /// <summary>
-    /// Ends game (destroys everything)
-    /// </summary>
-    public void Die()
+    protected override void Die()
     {
         foreach (Transform child in transform.parent)
         {
@@ -91,8 +64,9 @@ public class Base : MonoBehaviour, Entity
             {
                 Destroy(child.gameObject);
             }
-            Destroy(gameObject);
         }
+        usingGUI = false;
+        gameOver = true;
     }
 
     /// <summary>
@@ -106,9 +80,9 @@ public class Base : MonoBehaviour, Entity
     }
 
     /// <summary>
-    /// Starts respawn with the base's resource variables. For use by map manager when special tower is destroyed.
+    /// Starts respawn with the base's resource variables. For use by special tower when special tower is destroyed.
     /// </summary>
-    public void startRespawn()
+    public void StartRespawn()
     {
         StartRespawn(numBirds, numWheels);
     }
@@ -141,6 +115,12 @@ public class Base : MonoBehaviour, Entity
             {
                 GUILayout.Box("Timer: " + (totalRespawnTime - respawnTimer));
             }
+            GUILayout.EndArea();
+        }
+        if(gameOver) // Game over message
+        {
+            GUILayout.BeginArea(new Rect((Screen.width/2 - 45), (Screen.height/2 - 50), 90, 100));
+            GUILayout.Box("Game Over!");
             GUILayout.EndArea();
         }
     }
