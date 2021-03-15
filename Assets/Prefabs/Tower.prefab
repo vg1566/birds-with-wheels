@@ -146,7 +146,7 @@ MonoBehaviour:
   hp: 12
   speed: 0
   attackPower: 1
-  range: 5
+  range: 3
   rateOfFire: 1
   projectilePrefab: {fileID: 3213211799076024093, guid: f96f89cb6956dc844b1ef346c665d4cc,
     type: 3}

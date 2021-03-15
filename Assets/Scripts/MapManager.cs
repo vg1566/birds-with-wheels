@@ -47,9 +47,9 @@ public class MapManager : MonoBehaviour
     // All the towers in the scene
     private List<Entity> towers;
     // All the waves in the game
-    private Stack<Stack<Enemy>> waves;
+    private Queue<Queue<Enemy>> waves;
     // The enemies that will be spawned into the level
-    private Stack<Enemy> currentWave;
+    private Queue<Enemy> currentWave;
     // The enemies that are already spawned into the level
     // TODO: assess if we need this
     private List<Entity> enemiesOnScreen;
@@ -59,11 +59,14 @@ public class MapManager : MonoBehaviour
     private Transform towerContainer;
 
     [SerializeField]
-    private GameObject enemyPrefab;
-
-    // Only using for testing, delete when done!
+    private GameObject basicEnemy;
     [SerializeField]
-    private GameObject towerTest;
+    private GameObject buffEnemy;
+
+    [SerializeField]
+    private GameObject basicTower;
+    [SerializeField]
+    private GameObject specialTower;
 
     private Dictionary<TowerType, GameObject> towerPrefabs;
 
@@ -81,7 +84,10 @@ public class MapManager : MonoBehaviour
     [SerializeField]
     [Tooltip("How many seconds pass before " +
         "each subsequent enemy spawns during a wave.")]
-    private float secondsPerEnemy = 1;
+    private float secondsPerEnemy = 0.5f;
+
+    [SerializeField]
+    private float secondsBetweenWaves = 10;
 
     // The map, represented as ints based on the MapSquares enum
     private KeyValuePair<MapTiles, GameObject>[,] mapGrid;
@@ -89,11 +95,11 @@ public class MapManager : MonoBehaviour
     // This is how the map will be generated
     private readonly int[,] mapOutline =
     {
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2 },
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+            { 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2 },
+            { 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
     };
 
     // Start is called before the first frame update
@@ -101,48 +107,60 @@ public class MapManager : MonoBehaviour
     {
         towerPrefabs = new Dictionary<TowerType, GameObject> 
         {
-            { TowerType.Basic, towerTest },
-            { TowerType.Special, towerTest }
+            { TowerType.Basic, basicTower },
+            { TowerType.Special, specialTower }
         };
 
         towerContainer = new GameObject("Towers").transform;
 
         enemiesOnScreen = new List<Entity>();
         towers = new List<Entity>();
-        currentWave = new Stack<Enemy>();
+        currentWave = new Queue<Enemy>();
 
-        #region First wave
-        Stack<Enemy> firstWave = new Stack<Enemy>();
-        firstWave.Push(enemyPrefab.GetComponent<Enemy>());
-        firstWave.Push(enemyPrefab.GetComponent<Enemy>());
-        firstWave.Push(enemyPrefab.GetComponent<Enemy>());
-        firstWave.Push(enemyPrefab.GetComponent<Enemy>());
+        #region Wave initialization
+        waves = new Queue<Queue<Enemy>>();
+
+        // Make waves
+        for (int i = 1; i < 12; i++)
+        {
+            int basicEnemies = i % 4;
+            int buffEnemies = i / 4;
+
+            waves.Enqueue(CreateWave(basicEnemies, buffEnemies));
+        }
+
         #endregion
-
-        waves = new Stack<Stack<Enemy>>();
-        waves.Push(firstWave);
 
         // Generate the map based on mapOutline
         mapGrid = new KeyValuePair<MapTiles, GameObject>[mapOutline.GetLength(0), mapOutline.GetLength(1)];
         GenerateMap();
 
+        // Start the game
         StartWave();
+    }
+
+    /// <summary>
+    /// Creates a wave with the specified number of each enemy type
+    /// </summary>
+    /// <param name="basicEnemies">Number of basic enemies in the wave</param>
+    /// <returns>A stack with the specified amount of enemies</returns>
+    private Queue<Enemy> CreateWave(int basicEnemies = 0, int buffEnemies = 0)
+    {
+        Queue<Enemy> enemies = new Queue<Enemy>();
+        for (int i = 0; i < basicEnemies; i++)
+        {
+            enemies.Enqueue(basicEnemy.GetComponent<Enemy>());
+        }
+        for (int i = 0; i < buffEnemies; i++)
+        {
+            enemies.Enqueue(buffEnemy.GetComponent<Enemy>());
+        }
+
+        return enemies;
     }
 
     private void Update()
     {
-        // Just for testing
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        //    PlaceTower(mouseWorldPosition, TowerType.Basic);
-        //}
-        //if (Input.GetMouseButtonDown(1))
-        //{
-        //    Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        //    RemoveTower(mouseWorldPosition);
-        //}
-
         // Find a target for all towers and enemies
         for (int i = 0; i < towers.Count; i++)
         {
@@ -165,18 +183,6 @@ public class MapManager : MonoBehaviour
     // ------------------------------------
     // --------  HELPER FUNCTIONS  --------
     // ------------------------------------
-
-    /// <summary>
-    /// Pops the next wave of enemies from <see cref="waves"/> 
-    /// into <see cref="currentWave"/> and starts the new wave
-    /// </summary>
-    private void StartWave()
-    {
-        // TODO: Get Enemy class and set enemies stack 
-        // to whatever we want the wave to look like
-        currentWave = waves.Pop();
-        StartCoroutine(SpawnEnemy());
-    }
 
     /// <summary>
     /// Returns the world position of the map square at the specified coordinate
@@ -320,6 +326,18 @@ public class MapManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Pops the next wave of enemies from <see cref="waves"/> 
+    /// into <see cref="currentWave"/> and starts the new wave
+    /// </summary>
+    private void StartWave()
+    {
+        // TODO: Get Enemy class and set enemies stack 
+        // to whatever we want the wave to look like
+        currentWave = waves.Dequeue();
+        StartCoroutine(SpawnEnemy());
+    }
+
+    /// <summary>
     /// Spawns enemy from <see cref="currentWave"/> 
     /// every <see cref="secondsPerEnemy"/> seconds
     /// </summary>
@@ -330,7 +348,7 @@ public class MapManager : MonoBehaviour
 
         // Spawn a new enemy after waiting secondsPerEnemy seconds
         
-        GameObject newEnemy = Instantiate(currentWave.Pop().gameObject);
+        GameObject newEnemy = Instantiate(currentWave.Dequeue().gameObject);
         newEnemy.transform.position = mapGrid[2, 0].Value.transform.position;
         enemiesOnScreen.Add(newEnemy.GetComponent<Enemy>());
         
@@ -341,5 +359,16 @@ public class MapManager : MonoBehaviour
         {
             StartCoroutine(SpawnEnemy());
         }
+        else
+        {
+            // Start the next wave in 10 seconds
+            StartCoroutine(SpawnNextWaveInSeconds());
+        }
+    }
+
+    private IEnumerator SpawnNextWaveInSeconds()
+    {
+        yield return new WaitForSeconds(secondsBetweenWaves);
+        StartWave();
     }
 }

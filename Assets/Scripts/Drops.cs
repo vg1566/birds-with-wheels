@@ -45,6 +45,7 @@ public class Drops : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
+            player = GameObject.FindGameObjectWithTag("Player");
             player.GetComponent<Avatar>().numBirds += birdValue;
             player.GetComponent<Avatar>().numWheels += wheelValue;
             Destroy(gameObject);

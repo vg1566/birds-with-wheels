@@ -123,7 +123,7 @@ public class Avatar : Entity
         }
         if (GUILayout.Button("Transform into special tower"))
         {
-            PlaceTower(TowerType.Special);
+            TransformIntoTower();
         }
         if (GUILayout.Button("Place basic tower"))
         {

@@ -102,4 +102,15 @@ public class Enemy : AttackingEntity
 			elapsedTime = 0f;
 		}
 	}
+
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+		Base baseScript = collision.GetComponent<Base>();
+		if (baseScript != null)
+        {
+			baseScript.LoseHealth(1);
+			Destroy(gameObject);
+        }
+    }
 }

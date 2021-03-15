@@ -151,9 +151,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   avatar: {fileID: 0}
-  enemyPrefab: {fileID: 5852791738287752422, guid: da17d7b2df412a242ad47eadbadfbc22,
+  basicEnemy: {fileID: 5852791738287752422, guid: da17d7b2df412a242ad47eadbadfbc22,
     type: 3}
-  towerTest: {fileID: 8505739128418383665, guid: 34c2a074072b6654d96e27fbac4437fa,
+  buffEnemy: {fileID: 5852791738287752422, guid: 67da294cbb4da0447a797d68b70b9ec7,
+    type: 3}
+  basicTower: {fileID: 8505739128418383665, guid: 34c2a074072b6654d96e27fbac4437fa,
+    type: 3}
+  specialTower: {fileID: 6404470990273151200, guid: dfc7beccb2512dc4eac9e9ab3196bebb,
     type: 3}
   emptyTile: {fileID: 400400992199867577, guid: fd8db33c4933f704eb7bd279a88d6af0,
     type: 3}
@@ -161,6 +165,7 @@ MonoBehaviour:
     type: 3}
   baseTile: {fileID: 380332135521941529, guid: c2a12e57abd2231408b19d9a56667e36, type: 3}
   secondsPerEnemy: 2
+  secondsBetweenWaves: 5
 --- !u!4 &308288983
 Transform:
   m_ObjectHideFlags: 0
@@ -252,7 +257,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.5, y: 4.5, z: -10}
+  m_LocalPosition: {x: 6.5, y: 2.5, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

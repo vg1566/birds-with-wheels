@@ -143,5 +143,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39e1c2a78532aed4dab669f087899e11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  attractRange: 5
+  speed: 3
+  attractRange: 2
