@@ -20,9 +20,28 @@ public class Avatar : Entity
     public int numWheels = 0;
     public int numBirds = 0;
 
+    // TODO: swap to dictionary
     // Stores costs of tower types at the index of the enum value. e.g. a tower.Basic tower costs birdCosts[tower.Basic] birds and wheelCosts[tower.Basic] wheels
     public int[] birdcosts = { 1, 0 };
     public int[] wheelCosts = { 1, 0 };
+
+    public struct TowerCost
+    {
+        int birds;
+        int wheels;
+
+        public TowerCost(int birds, int wheels)
+        {
+            this.birds = birds;
+            this.wheels = wheels;
+        }
+    }
+
+    public Dictionary<TowerType, TowerCost> prices = new Dictionary<TowerType, TowerCost>
+    {
+        { TowerType.Special, new TowerCost(birds: 0, wheels: 0) },
+        { TowerType.Basic, new TowerCost(birds: 1, wheels: 1) }
+    };
 
     // Start is called before the first frame update
     void Start()
