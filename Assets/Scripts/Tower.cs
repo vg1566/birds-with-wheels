@@ -9,7 +9,6 @@ public class Tower : AttackingEntity
     float elapsedTime;
     GameObject player;
     GameObject baseVar;
-    public bool isSpecial = false;
 
     MapManager mapManager;
 
@@ -48,11 +47,6 @@ public class Tower : AttackingEntity
 
     protected override void Die()
     {
-        if (isSpecial)
-        {
-            baseVar.GetComponent<Base>().StartRespawn();
-        }
-
         mapManager.RemoveTower(transform.position);
     }
 }
