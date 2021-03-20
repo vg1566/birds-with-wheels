@@ -9,6 +9,7 @@ public class Tower : AttackingEntity
     float elapsedTime;
     GameObject player;
     GameObject baseVar;
+	//DELETE
     public bool isSpecial = false;
 
     MapManager mapManager;
@@ -17,7 +18,8 @@ public class Tower : AttackingEntity
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
-        baseVar = GameObject.Find("Base(Clone) at index 2, 13");
+		//DELETE
+		baseVar = GameObject.Find("Base(Clone) at index 2, 13");
     }
 
     // Update is called once per frame
@@ -48,6 +50,7 @@ public class Tower : AttackingEntity
 
     protected override void Die()
     {
+		//DELETE
         if (isSpecial)
         {
             baseVar.GetComponent<Base>().StartRespawn();
