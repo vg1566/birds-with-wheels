@@ -5,13 +5,17 @@ using UnityEngine;
 public enum TowerType
 {
     Basic,
-    Special
+    SpecialOffense,
+    SpecialDefense,
+    Buff,
+    Angry,
+    Vigilant
 }
 
 // Author: Valentina Genoese-Zerbi
 // Contains all the scripting necessary for an avatar gameobject
-// Merge notes:
-//      When Special Tower is destroyed, must set isTower to false and activate Die()
+// Merge Notes:
+//      Map manager needs to work with SpecialOffense and SpecialDefense TowerTypes
 public class Avatar : Entity
 {
     public Vector3 position = Vector3.zero;
@@ -53,8 +57,13 @@ public class Avatar : Entity
 
     public Dictionary<TowerType, TowerCost> prices = new Dictionary<TowerType, TowerCost>
     {
-        { TowerType.Special, new TowerCost(birds: 0, wheels: 0) },
-        { TowerType.Basic, new TowerCost(birds: 1, wheels: 1) }
+        { TowerType.SpecialOffense, new TowerCost(birds: 0, wheels: 0) },
+        { TowerType.SpecialDefense, new TowerCost(birds: 0, wheels: 0) },
+        { TowerType.Basic, new TowerCost(birds: 1, wheels: 1) },
+        { TowerType.Buff, new TowerCost(birds: 2, wheels: 1) },
+        { TowerType.Angry, new TowerCost(birds: 1, wheels: 2) },
+        { TowerType.Vigilant, new TowerCost(birds: 2, wheels: 2) },
+
     };
 
     // Start is called before the first frame update
@@ -79,9 +88,11 @@ public class Avatar : Entity
                 respawning = false;
                 respawnTimer = 0;
                 status = "Special Tower";
-                transform.position = playerBase.transform.position;
-                transform.position += new Vector3(0, 0, -3);
+                position = playerBase.transform.position;
+                position += new Vector3(0, 0, -3);
+                transform.position = position;
                 gameObject.GetComponent<Renderer>().enabled = true;
+                isDead = false;
             }
         }
     }
@@ -95,6 +106,15 @@ public class Avatar : Entity
         gameObject.GetComponent<Renderer>().enabled = false;
         respawning = true;
         status = "Respawning";
+    }
+
+    /// <summary>
+    /// For use when tower is destroyed
+    /// </summary>
+    public void TowerDie()
+    {
+        isTower = false;
+        Die();
     }
 
     /// <summary>
@@ -142,12 +162,14 @@ public class Avatar : Entity
     /// <summary>
     /// Creates special tower, tells base to use base GUI, and destroys self
     /// </summary>
-    public void TransformIntoTower()
+    public void TransformIntoTower(TowerType mode)
     {
-        PlaceTower(TowerType.Special);
-        isTower = true;
-        gameObject.GetComponent<Renderer>().enabled = false;
-        status = "Special Tower";
+        if (mapManager.GetComponent<MapManager>().PlaceTower(position, mode))
+        {
+            isTower = true;
+            gameObject.GetComponent<Renderer>().enabled = false;
+            status = "Special Tower";
+        }
     }
 
     /// <summary>
@@ -182,14 +204,18 @@ public class Avatar : Entity
         }
         else if(!isDead && !isTower)
         {
-            GUILayout.BeginArea(new Rect(0, (Screen.height - 120), 200, 120));
+            GUILayout.BeginArea(new Rect(0, (Screen.height - 150), 200, 150));
             if (GUILayout.Button("Break nearest tower"))
             {
                 BreakTower();
             }
-            if (GUILayout.Button("Transform into special tower"))
+            if (GUILayout.Button("Transform into defensive tower"))
             {
-                TransformIntoTower();
+                TransformIntoTower(TowerType.SpecialDefense);
+            }
+            if (GUILayout.Button("Transform into offensive tower"))
+            {
+                TransformIntoTower(TowerType.SpecialOffense);
             }
             if (GUILayout.Button("Place basic tower"))
             {

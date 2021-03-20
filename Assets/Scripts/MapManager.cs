@@ -108,7 +108,7 @@ public class MapManager : MonoBehaviour
         towerPrefabs = new Dictionary<TowerType, GameObject> 
         {
             { TowerType.Basic, basicTower },
-            { TowerType.Special, specialTower }
+            { TowerType.SpecialDefense, specialTower }
         };
 
         towerContainer = new GameObject("Towers").transform;
@@ -259,10 +259,11 @@ public class MapManager : MonoBehaviour
     /// </summary>
     /// <param name="position">World position to place the tower at</param>
     /// <param name="towerType">The type  of tower to place</param>
-    public void PlaceTower(Vector3 position, TowerType towerType)
+    public bool PlaceTower(Vector3 position, TowerType towerType)
     {
         Vector2Int mapCoords = GetMapCoordinateAtWorldPosition(position);
         PlaceTower(mapCoords.x, mapCoords.y, towerType);
+        return true;
     }
 
     /// <summary>
@@ -304,10 +305,11 @@ public class MapManager : MonoBehaviour
     /// Removes tower at the given world position
     /// </summary>
     /// <param name="position">World position of the tower to remove</param>
-    public void RemoveTower(Vector3 position)
+    public TowerType RemoveTower(Vector3 position)
     {
         Vector2Int mapCoords = GetMapCoordinateAtWorldPosition(position);
         RemoveTower(mapCoords.x, mapCoords.y);
+        return TowerType.Basic;
     }
     
     /// <summary>

@@ -7,7 +7,6 @@ public class Tower : AttackingEntity
     public GameObject projectilePrefab;
 
     float elapsedTime;
-    GameObject player;
     GameObject baseVar;
 
     MapManager mapManager;
@@ -15,7 +14,6 @@ public class Tower : AttackingEntity
     // Start is called before the first frame update
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
         baseVar = GameObject.Find("Base(Clone) at index 2, 13");
     }
 
