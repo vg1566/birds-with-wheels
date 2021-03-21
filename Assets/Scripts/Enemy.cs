@@ -31,6 +31,7 @@ public class Enemy : AttackingEntity
 		get { return this.transform.position.y; }
 		set { this.transform.position = new Vector3(this.transform.position.x, value); }
 	}
+	protected float elapsedTime;
 
 	float lifetime = 0;
 
@@ -190,7 +191,6 @@ public class Enemy : AttackingEntity
 	}
 
 	// Update is called once per frame
-	private float elapsedTime;
     void Update()
     {
 		//moves

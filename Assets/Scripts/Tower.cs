@@ -11,6 +11,7 @@ public class Tower : AttackingEntity
     GameObject baseVar;
 	//DELETE
     public bool isSpecial = false;
+	public bool canFire = true;
 
     MapManager mapManager;
 
@@ -26,7 +27,7 @@ public class Tower : AttackingEntity
     void Update()
     {
         elapsedTime += Time.deltaTime;
-        if (target != null && elapsedTime > rateOfFire)
+        if (target != null && elapsedTime > rateOfFire && canFire)
         {
             FireProjectile();
             elapsedTime = 0f;
