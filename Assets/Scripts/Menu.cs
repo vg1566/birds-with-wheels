@@ -10,16 +10,21 @@ public class Menu : MonoBehaviour
     public GameObject pauseMenu;
     public GameObject gameOverMenu;
     public TextMeshProUGUI scoreText;
+	public GameObject mapman;
+	public Base playerBase;
+	
 
-    public void StartGame()
+	public void StartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+		Time.timeScale = 1f;
     }
 
     // Start is called before the first frame update
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+		
+		if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (isPaused)
             {
@@ -30,15 +35,17 @@ public class Menu : MonoBehaviour
                 Pause();
             }
         }
-
-        /* Needs to know how game is over
-        if (isGameOver)
+		if (!playerBase /*&& SceneManager.GetActiveScene().name == "MainScene"*/)
+		{
+			playerBase = GameObject.FindGameObjectWithTag("base")?.GetComponent<Base>();
+		}
+		//Needs to know how game is over
+		else if (playerBase.gameOver)
         {
             gameOverMenu.SetActive(true);
             Time.timeScale = 0f;
-            scoreText.text = 
+			scoreText.text = "" + (mapman.GetComponent<MapManager>().currentWave - 2);
         }
-        */
     }
 
     public void Resume()
@@ -57,15 +64,14 @@ public class Menu : MonoBehaviour
 
     public void LoadMainMenu()
     {
-        Time.timeScale = 1f;
+        //Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
     }
 
     public void Restart()
     {
-        gameOverMenu.SetActive(false);
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
-
+		gameOverMenu.SetActive(false);
+		Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+	}
 }

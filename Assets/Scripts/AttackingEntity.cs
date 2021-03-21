@@ -12,7 +12,7 @@ public abstract class AttackingEntity : Entity
     [SerializeField]
     protected int range;
     /// <summary>
-    /// Projectiles per second
+    /// Seconds per projectile
     /// </summary>
     [SerializeField]
     protected float rateOfFire;

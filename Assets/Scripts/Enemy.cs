@@ -10,6 +10,7 @@ public class Enemy : AttackingEntity
 	public GameObject projectilePrefab;
 
 	public GameObject dropPrefab;
+	public MapManager mapman; 
 
 	int[,] map;
 	public int[,] traversed;
@@ -18,18 +19,16 @@ public class Enemy : AttackingEntity
 	int pathInt = 1;
 	public Vector2 basePosition;
 	public Vector2 targetPoint;
-	//DELETE
-	public MapManager mapManager;
 
 	public float X
 	{
 		get{ return this.transform.position.x; }
-		set{this.transform.position = new Vector3(value, this.transform.position.y);}
+		set{this.transform.position = new Vector2(value, this.transform.position.y);}
 	}
 	public float Y
 	{
 		get { return this.transform.position.y; }
-		set { this.transform.position = new Vector3(this.transform.position.x, value); }
+		set { this.transform.position = new Vector2(this.transform.position.x, value); }
 	}
 	protected float elapsedTime;
 
@@ -65,8 +64,8 @@ public class Enemy : AttackingEntity
 		int SortByDistanceToTarget(Entity e1, Entity e2)
 		{
 			return 
-				(int)(Vector3.Distance(e1.transform.position, transform.position)
-					- Vector3.Distance(e2.transform.position, transform.position));
+				(int)(Vector2.Distance(e1.transform.position, transform.position)
+					- Vector2.Distance(e2.transform.position, transform.position));
 		}
 	}
 
@@ -75,7 +74,7 @@ public class Enemy : AttackingEntity
 	/// </summary>
 	protected override void FireProjectile()
 	{
-		GameObject projectileObject = Instantiate(projectilePrefab, new Vector3(this.X, this.Y), Quaternion.identity);
+		GameObject projectileObject = Instantiate(projectilePrefab, new Vector2(this.X, this.Y), Quaternion.identity);
 		Projectile projectileEntity = projectileObject.GetComponent<Projectile>();
 		projectileEntity.damage = attackPower;
 		projectileEntity.target = this.target.gameObject;
@@ -122,17 +121,6 @@ public class Enemy : AttackingEntity
 		if (map == null) return;
 
 		List<Vector2> possibleTiles = new List<Vector2>();
-		//TODO
-		//goes left across the screen
-		//transform.Translate(new Vector3(1, 0, 0) * speed * Time.deltaTime);
-		//{ 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-		//{ 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-		//{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2 },
-		//{ 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-		//{ 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-		//columns = x, rows = y
-		//[y,x]; rc race car
-		//why is everything the wrong way. :(
 
 		//gets current position in map
 		int wholeX = (int)Mathf.Round(X);
@@ -205,11 +193,11 @@ public class Enemy : AttackingEntity
 		}
 	}
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
+	private void OnTriggerEnter2D(Collider2D collision)
+	{
 		Base baseScript = collision.GetComponent<Base>();
 		if (baseScript != null)
-        {
+		{
 			baseScript.LoseHealth(1);
 			Destroy(gameObject);
         }

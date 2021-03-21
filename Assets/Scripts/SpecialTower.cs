@@ -31,8 +31,12 @@ public class SpecialTower : Tower
                 player.numBirds++;
                 player.numWheels++;
             }
-        }    
-    }
+        }
+		if (mode == TowerType.SpecialOffense)
+		{
+			base.Update();
+		}
+	}
 
     /// <summary>
     /// Sends message to Avatar before dying

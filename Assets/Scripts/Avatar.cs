@@ -24,7 +24,6 @@ public class Avatar : Entity
     public bool isTower = false;
     private string status = "Error";
 
-    public GameObject specialTower;
     public GameObject playerBase;
     public GameObject mapManager;
 
@@ -84,7 +83,7 @@ public class Avatar : Entity
                 respawnTimer = 0;
                 status = "Special Tower";
                 position = playerBase.transform.position;
-                position += new Vector3(0, 0, -3);
+                //position += new Vector3(0, 0, -3);
                 transform.position = position;
                 gameObject.GetComponent<Renderer>().enabled = true;
                 isDead = false;
@@ -118,23 +117,30 @@ public class Avatar : Entity
     public void Move()
     {
         Vector3 direction = Vector3.zero;
-        if (Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetKey(KeyCode.W))
         {
             direction += Vector3.up;
         }
-        if (Input.GetKey(KeyCode.DownArrow))
+        if (Input.GetKey(KeyCode.S))
         {
             direction += Vector3.down;
         }
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (Input.GetKey(KeyCode.A))
         {
             direction += Vector3.left;
         }
-        if (Input.GetKey(KeyCode.RightArrow))
+        if (Input.GetKey(KeyCode.D))
         {
             direction += Vector3.right;
-        }
-        position += direction.normalized * speed * Time.deltaTime;
+		}
+		if(Input.GetKey(KeyCode.Alpha1))PlaceTower(TowerType.Basic);
+		if(Input.GetKey(KeyCode.Alpha2))PlaceTower(TowerType.Buff);
+		if(Input.GetKey(KeyCode.Alpha3))PlaceTower(TowerType.Angry);
+		if(Input.GetKey(KeyCode.Alpha4))PlaceTower(TowerType.Vigilant);
+		if(Input.GetKey(KeyCode.Alpha5)) TransformIntoTower(TowerType.SpecialOffense);
+		if(Input.GetKey(KeyCode.Alpha6)) TransformIntoTower(TowerType.SpecialDefense);
+
+		position += direction.normalized * speed * Time.deltaTime;
         transform.position = position;
     }
 
@@ -163,6 +169,7 @@ public class Avatar : Entity
         {
             isTower = true;
             gameObject.GetComponent<Renderer>().enabled = false;
+			position = playerBase.transform.position;
             status = "Special Tower";
         }
     }
@@ -172,10 +179,13 @@ public class Avatar : Entity
     /// </summary>
     public void BreakTower()
     {
-        TowerType towerType = mapManager.GetComponent<MapManager>().RemoveTower(position);
-        numBirds += prices[towerType].birds;
-        numWheels += prices[towerType].wheels;
-    }
+        TowerType? towerType = mapManager.GetComponent<MapManager>().RemoveTower(position);
+		if (towerType.HasValue)
+		{
+			numBirds += prices[towerType.Value].birds;
+			numWheels += prices[towerType.Value].wheels;
+		}
+	}
 
     /// <summary>
     /// Displays stats and tower placement buttons

@@ -28,8 +28,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3624725204305388048}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.4986, y: 0.4986, z: 0}
-  m_LocalScale: {x: 5.013767, y: 5.013767, z: 0.5013767}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.39257118, y: 0.39257118, z: 0.19628559}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -73,8 +73,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  m_Color: {r: 0, g: 1, b: 0.0184803, a: 1}
+  m_Sprite: {fileID: 21300000, guid: a519c32bae18c1c44a32d6f1ddc3251a, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -118,18 +118,18 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.0330137, y: 0.078425646}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.2, y: 0.2}
+    oldSize: {x: 2.56, y: 2.56}
     newSize: {x: 0.2, y: 0.2}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.2, y: 0.2}
+  m_Size: {x: 1.9167016, y: 2.3216205}
   m_EdgeRadius: 0
 --- !u!114 &3624725204305388049
 MonoBehaviour:
@@ -148,13 +148,9 @@ MonoBehaviour:
   position: {x: 0, y: 0, z: 0}
   isDead: 0
   isTower: 0
-  specialTower: {fileID: 6404470990273151200, guid: dfc7beccb2512dc4eac9e9ab3196bebb,
-    type: 3}
   playerBase: {fileID: 0}
   mapManager: {fileID: 0}
   numWheels: 1
   numBirds: 1
   respawnTimer: 0
   respawning: 0
-  birdcosts: 0100000000000000
-  wheelCosts: 0100000000000000

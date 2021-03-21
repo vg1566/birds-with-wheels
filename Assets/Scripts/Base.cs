@@ -11,7 +11,7 @@ public class Base : Entity
 {
     public Vector3 position = Vector3.zero;
 
-    private bool gameOver = false;
+    public bool gameOver = false;
 
     public GameObject avatarPrefab;
     public GameObject currentAvatar;

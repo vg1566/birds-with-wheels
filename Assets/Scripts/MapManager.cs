@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -20,6 +21,14 @@ public enum MapTiles
     Base = 2,
 
     EnemyStart = 99
+}
+
+public enum EnemyType
+{
+	Basic,
+	Buff,
+	Speedy,
+	Thief
 }
 
 /// <summary>
@@ -46,7 +55,7 @@ public class MapManager : MonoBehaviour
     // All the towers in the scene
     private List<Entity> towers;
     // What wave we're on
-    private int currentWave = 1;
+    public int currentWave = 1;
     // The enemies that will be spawned into the level this wave
     private Queue<Enemy> currentWaveEnemies;
     // The enemies that are already spawned into the level
@@ -61,11 +70,14 @@ public class MapManager : MonoBehaviour
 
     [SerializeField]
     private GameObject basicEnemy;
-    [SerializeField]
-    private GameObject buffEnemy;
-
-    // Tower prefab struct will be visible in inspector
-    [Serializable]
+	[SerializeField]
+	private GameObject buffEnemy;
+	[SerializeField]
+	private GameObject thiefEnemy;
+	[SerializeField]
+	//private GameObject buffEnemy;
+	// Tower prefab struct will be visible in inspector
+	[Serializable]
     public struct TowerPrefab
     {
         public TowerType towerType;
@@ -79,8 +91,13 @@ public class MapManager : MonoBehaviour
 
     private Dictionary<TowerType, GameObject> towerPrefabDictionary;
 
-    // Prefabs used to generate the map from the below array
-    [SerializeField]
+	[SerializeField]
+	private EnemyPrefab[] enemyPrefabs;
+
+	private Dictionary<EnemyType, GameObject> enemyPrefabDictionary;
+
+	// Prefabs used to generate the map from the below array
+	[SerializeField]
     [Tooltip("The tile that will be used as empty space")]
     private GameObject emptyTile;
     [SerializeField]
@@ -110,8 +127,15 @@ public class MapManager : MonoBehaviour
             tower = towerGameObject;
         }
     }
+	
+	[Serializable]
+	public struct EnemyPrefab
+	{
+		public EnemyType enemyType;
+		public GameObject enemyGameObject;
+	}
 
-    private TowerGridSpace[,] towerGrid;
+	private TowerGridSpace[,] towerGrid;
 
     // This is how the map will be generated
     private readonly int[,] mapOutline =
@@ -126,13 +150,17 @@ public class MapManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // If there are no prefabs, don't start the game.
-        if (towerPrefabs == null || towerPrefabs.Length == 0)
+		//TODO figure out why this doesn't work in menu
+		Time.timeScale = 1f;
+
+		// If there are no prefabs, don't start the game.
+		if (towerPrefabs == null || towerPrefabs.Length == 0)
         {
             throw new InvalidOperationException("Cannot begin the game with no tower prefabs.");
         }
 
-        // Populate tower prefab dictionary with all the tower prefabs created in the inspector.
+		// Populate tower and enemy prefab dictionary with all the tower and enemy 
+		//prefabs created in the inspector.
         towerPrefabDictionary = new Dictionary<TowerType, GameObject>();
         for (int i = 0; i < towerPrefabs.Length; i++)
         {
@@ -141,7 +169,15 @@ public class MapManager : MonoBehaviour
             towerPrefabDictionary.Add(pta.towerType, pta.towerGameObject);
         }
 
-        towerContainer = new GameObject("Towers").transform;
+		enemyPrefabDictionary = new Dictionary<EnemyType, GameObject>();
+		for (int i = 0; i < enemyPrefabs.Length; i++)
+		{
+			// Prefab to add
+			EnemyPrefab pta = enemyPrefabs[i];
+			enemyPrefabDictionary.Add(pta.enemyType, pta.enemyGameObject);
+		}
+
+		towerContainer = new GameObject("Towers").transform;
 
         towers = new List<Entity>();
         enemiesOnScreen = new List<Entity>();
@@ -163,7 +199,7 @@ public class MapManager : MonoBehaviour
         // Find a target for all towers and enemies
         for (int i = 0; i < towers.Count; i++)
         {
-            ((Tower)towers[i]).FindTarget(enemiesOnScreen);
+			((Tower)towers[i]).FindTarget(enemiesOnScreen);
         }
         for (int i = 0; i < enemiesOnScreen.Count; i++)
         {
@@ -174,8 +210,7 @@ public class MapManager : MonoBehaviour
                 i--;
                 continue;
             } 
-
-            ((Enemy)enemiesOnScreen[i]).FindTarget(towers);
+            ((Enemy)enemiesOnScreen[i]).FindTarget(towers.Where(t => t.gameObject.activeInHierarchy).ToList());
         }
     }
 
@@ -276,8 +311,7 @@ public class MapManager : MonoBehaviour
     public bool PlaceTower(Vector3 position, TowerType towerType)
     {
         Vector2Int mapCoords = GetMapCoordinateAtWorldPosition(position);
-        PlaceTower(mapCoords.x, mapCoords.y, towerType);
-        return true;
+		return PlaceTower(mapCoords.x, mapCoords.y, towerType);
     }
 
     /// <summary>
@@ -289,6 +323,7 @@ public class MapManager : MonoBehaviour
     /// <returns>Whether the tower placement succeeded</returns>
     public bool PlaceTower(int x, int y, TowerType towerType)
     {
+
         // If the map space is not empty, don't place a tower
         if (towerGrid[y, x].tower != null
             || mapOutline[y, x] != (int)MapTiles.Empty)
@@ -303,8 +338,12 @@ public class MapManager : MonoBehaviour
         newTower.transform.position = GetPositionAtMapCoordinate(x, y)
             + new Vector3(0, 0, -1);
 
-        // Grab tower component
-        Tower towerScript = newTower.GetComponent<Tower>();
+		// Grab tower component
+		Tower towerScript = newTower.GetComponent<Tower>();
+		if (towerScript is SpecialTower)
+		{
+			((SpecialTower)towerScript).mode = towerType;
+		}
 
         // Name it accordingly
         newTower.name = $"{towerType.ToString()} tower at position {x}, {y}.";
@@ -316,8 +355,8 @@ public class MapManager : MonoBehaviour
         // Update towerGrid to reflect new tower
         towerGrid[y, x] = new TowerGridSpace(towerType, newTower);
 
-        // A tower was placed
-        return true;
+		// A tower was placed
+		return true;
     }
 
     /// <summary>
@@ -368,8 +407,12 @@ public class MapManager : MonoBehaviour
     {
         int basicEnemies = currentWave % 4;
         int buffEnemies = currentWave / 4;
+		int speedyEnemies = currentWave / 8;
+		int thiefEnemies = currentWave / 12;
 
-        currentWaveEnemies = CreateWave(basicEnemies, buffEnemies);
+		
+
+        currentWaveEnemies = CreateWave(basicEnemies, buffEnemies, speedyEnemies, thiefEnemies);
         StartCoroutine(SpawnEnemy());
     }
 
@@ -378,19 +421,27 @@ public class MapManager : MonoBehaviour
     /// </summary>
     /// <param name="basicEnemies">Number of basic enemies in the wave</param>
     /// <returns>A stack with the specified amount of enemies</returns>
-    private Queue<Enemy> CreateWave(int basicEnemies = 0, int buffEnemies = 0)
+    private Queue<Enemy> CreateWave(int basicEnemies = 0, int buffEnemies = 0, int speedyEnemies = 0, int thiefEnemies = 0)
     {
         Queue<Enemy> enemies = new Queue<Enemy>();
         for (int i = 0; i < basicEnemies; i++)
         {
-            enemies.Enqueue(basicEnemy.GetComponent<Enemy>());
+			enemies.Enqueue(enemyPrefabDictionary[EnemyType.Basic].GetComponent<Enemy>());
         }
         for (int i = 0; i < buffEnemies; i++)
         {
-            enemies.Enqueue(buffEnemy.GetComponent<Enemy>());
-        }
+            enemies.Enqueue(enemyPrefabDictionary[EnemyType.Buff].GetComponent<Enemy>());
+		}
+		for (int i = 0; i < speedyEnemies; i++)
+		{
+			enemies.Enqueue(enemyPrefabDictionary[EnemyType.Speedy].GetComponent<Enemy>());
+		}
+		for (int i = 0; i < thiefEnemies; i++)
+		{
+			enemies.Enqueue(enemyPrefabDictionary[EnemyType.Thief].GetComponent<Enemy>());
+		}
 
-        return enemies;
+		return enemies;
     }
 
     /// <summary>
@@ -404,14 +455,11 @@ public class MapManager : MonoBehaviour
 
         // Spawn a new enemy after waiting secondsPerEnemy seconds
         
-        GameObject newEnemy = Instantiate(currentWave.Dequeue().gameObject);
-        newEnemy.transform.position = mapGrid[2, 0].Value.transform.position;
-		
-		//LARS' TESTING STUFF
-		newEnemy.GetComponent<Enemy>().SetMap(this.mapOutline);
-		
+        GameObject newEnemy = Instantiate(currentWaveEnemies.Dequeue().gameObject);
+        newEnemy.transform.position = GetPositionAtMapCoordinate(0,2);
+		newEnemy.GetComponent<Enemy>().SetMap(this.mapOutline);		
         enemiesOnScreen.Add(newEnemy.GetComponent<Enemy>());
-        newEnemy.GetComponent<Enemy>().mapManager = this;
+        //newEnemy.GetComponent<Enemy>().mapManager = this;
         //newEnemy.GetComponent<Enemy>().SetMap(mapOutline);
 
         // Only continue to spawn enemies 
@@ -430,7 +478,10 @@ public class MapManager : MonoBehaviour
 
     private IEnumerator WaitThenSpawnNextWave()
     {
-        yield return new WaitForSeconds(secondsBetweenWaves);
+		yield return new WaitUntil(()=>{
+			return enemiesOnScreen.Count < 1;
+		});
         StartWave();
     }
+	
 }

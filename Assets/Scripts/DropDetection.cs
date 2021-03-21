@@ -22,7 +22,9 @@ public class DropDetection : MonoBehaviour
     {
         // If the player is within the detection circle, 
         // move the drop closer to them.
-        if (collision.tag == "Player")
+        if (collision.tag == "Player" 
+			&& !collision.gameObject.GetComponent<Avatar>().isDead  
+			&& !collision.gameObject.GetComponent<Avatar>().isTower)
         {
             parent.position =
                 Vector3.MoveTowards(

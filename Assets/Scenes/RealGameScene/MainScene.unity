@@ -413,15 +413,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8fc180e34692144ea135d15589094f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  avatar: {fileID: 0}
-  basicEnemy: {fileID: 5852791738287752422, guid: da17d7b2df412a242ad47eadbadfbc22,
+  currentWave: 1
+  basicEnemy: {fileID: 3069475108355101155, guid: 6f54a15f30ee7b644b7cbe3be6a6909f,
     type: 3}
   buffEnemy: {fileID: 5852791738287752422, guid: 67da294cbb4da0447a797d68b70b9ec7,
     type: 3}
-  basicTower: {fileID: 8505739128418383665, guid: 34c2a074072b6654d96e27fbac4437fa,
-    type: 3}
-  specialTower: {fileID: 6404470990273151200, guid: dfc7beccb2512dc4eac9e9ab3196bebb,
-    type: 3}
+  thiefEnemy: {fileID: 0}
+  towerPrefabs:
+  - towerType: 0
+    towerGameObject: {fileID: 8505739128418383665, guid: 34c2a074072b6654d96e27fbac4437fa,
+      type: 3}
+  - towerType: 3
+    towerGameObject: {fileID: 2211058716888194337, guid: 3f6f972a0b73e5c498df15c462d05cc3,
+      type: 3}
+  - towerType: 4
+    towerGameObject: {fileID: 4545125253938978632, guid: 0bc58309acb0bae4a82a8434a1ccb996,
+      type: 3}
+  - towerType: 5
+    towerGameObject: {fileID: 4342023578677223072, guid: b35f6d97e344e5c4eb083665c8745df4,
+      type: 3}
+  - towerType: 1
+    towerGameObject: {fileID: 6404470990273151200, guid: dfc7beccb2512dc4eac9e9ab3196bebb,
+      type: 3}
+  - towerType: 2
+    towerGameObject: {fileID: 6404470990273151200, guid: dfc7beccb2512dc4eac9e9ab3196bebb,
+      type: 3}
+  enemyPrefabs:
+  - enemyType: 0
+    enemyGameObject: {fileID: 5852791738287752422, guid: da17d7b2df412a242ad47eadbadfbc22,
+      type: 3}
+  - enemyType: 1
+    enemyGameObject: {fileID: 5852791738287752422, guid: 67da294cbb4da0447a797d68b70b9ec7,
+      type: 3}
+  - enemyType: 2
+    enemyGameObject: {fileID: 5639489482768651166, guid: 88b8e3c9791d98e448e00e3bfd41c48b,
+      type: 3}
+  - enemyType: 3
+    enemyGameObject: {fileID: 3069475108355101155, guid: 6f54a15f30ee7b644b7cbe3be6a6909f,
+      type: 3}
   emptyTile: {fileID: 400400992199867577, guid: fd8db33c4933f704eb7bd279a88d6af0,
     type: 3}
   pathTile: {fileID: 7839899432390475279, guid: 4c83ef1ae6aad0f4c9916980fdb3ad5e,
@@ -1422,7 +1451,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -60, y: 50}
+  m_AnchoredPosition: {x: 0, y: 87.1}
   m_SizeDelta: {x: 255.07959, y: 71.877045}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1466243904
@@ -1555,7 +1584,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 178, y: 50}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 200, y: 71.87695}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1547221408
@@ -1611,8 +1640,8 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 1
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -1770,6 +1799,8 @@ MonoBehaviour:
   pauseMenu: {fileID: 2002153079}
   gameOverMenu: {fileID: 2111717469}
   scoreText: {fileID: 1547221408}
+  mapman: {fileID: 308288981}
+  playerBase: {fileID: 0}
 --- !u!1 &2002153079
 GameObject:
   m_ObjectHideFlags: 0
