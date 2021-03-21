@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6404470990273151200
+--- !u!1 &4545125253938978632
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,39 +8,39 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2376081157528081505}
-  - component: {fileID: 5804882085861615898}
-  - component: {fileID: -2562236098861435620}
-  - component: {fileID: 7330897344295367227}
-  - component: {fileID: -3003629998387822408}
+  - component: {fileID: 5119271171778661321}
+  - component: {fileID: 8744811530964577845}
+  - component: {fileID: 3687618400418783980}
+  - component: {fileID: 7140709807308282858}
+  - component: {fileID: 4306000480402697047}
   m_Layer: 0
-  m_Name: SpecialTower
+  m_Name: AngryTower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2376081157528081505
+--- !u!4 &5119271171778661321
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6404470990273151200}
+  m_GameObject: {fileID: 4545125253938978632}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.540853, y: -2.0976086, z: -1.2832031}
+  m_LocalPosition: {x: 10.841591, y: 3.1618795, z: -1.2832031}
   m_LocalScale: {x: 7, y: 7, z: 7}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &5804882085861615898
+--- !u!212 &8744811530964577845
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6404470990273151200}
+  m_GameObject: {fileID: 4545125253938978632}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -74,7 +74,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Color: {r: 0, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.5283019, g: 0.17821114, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -84,14 +84,14 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!50 &-2562236098861435620
+--- !u!50 &3687618400418783980
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6404470990273151200}
+  m_GameObject: {fileID: 4545125253938978632}
   m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
@@ -105,13 +105,13 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!61 &7330897344295367227
+--- !u!61 &7140709807308282858
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6404470990273151200}
+  m_GameObject: {fileID: 4545125253938978632}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
@@ -131,23 +131,22 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.16, y: 0.16}
   m_EdgeRadius: 0
---- !u!114 &-3003629998387822408
+--- !u!114 &4306000480402697047
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6404470990273151200}
+  m_GameObject: {fileID: 4545125253938978632}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7fd155a6906522e44a9fd89013b16ee1, type: 3}
+  m_Script: {fileID: 11500000, guid: 50f13417c4c6eb44783dd1cecd9a3379, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: 6
+  hp: 12
   speed: 0
-  attackPower: 0
-  range: 1
-  rateOfFire: 0
-  projectilePrefab: {fileID: 0}
-  mode: 1
-  player: {fileID: 0}
+  attackPower: 1
+  range: 3
+  rateOfFire: 2
+  projectilePrefab: {fileID: 3213211799076024093, guid: f96f89cb6956dc844b1ef346c665d4cc,
+    type: 3}
