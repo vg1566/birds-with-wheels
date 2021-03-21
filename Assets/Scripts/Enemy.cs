@@ -31,8 +31,9 @@ public class Enemy : AttackingEntity
 	/// </summary>
 	protected override void Die()
 	{
-        var drop = Instantiate(dropPrefab);
+        GameObject drop = Instantiate(dropPrefab);
 		drop.transform.position = transform.position;
+		drop = drop.transform.GetChild(0).gameObject; // where the drop script is
 		drop.GetComponent<Drops>().SetDropValues(Random.value < birdDropRate ? 1 : 0, Random.value < wheelDropRate ? 1 : 0);
 
 		Destroy(gameObject);

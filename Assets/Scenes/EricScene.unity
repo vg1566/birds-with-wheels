@@ -150,14 +150,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8fc180e34692144ea135d15589094f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  towerTest: {fileID: 8505739128418383665, guid: 34c2a074072b6654d96e27fbac4437fa,
+  basicEnemy: {fileID: 5852791738287752422, guid: da17d7b2df412a242ad47eadbadfbc22,
     type: 3}
+  buffEnemy: {fileID: 5852791738287752422, guid: 67da294cbb4da0447a797d68b70b9ec7,
+    type: 3}
+  towerPrefabs:
+  - towerType: 0
+    towerGameObject: {fileID: 8505739128418383665, guid: 34c2a074072b6654d96e27fbac4437fa,
+      type: 3}
+  - towerType: 1
+    towerGameObject: {fileID: 6404470990273151200, guid: dfc7beccb2512dc4eac9e9ab3196bebb,
+      type: 3}
   emptyTile: {fileID: 400400992199867577, guid: fd8db33c4933f704eb7bd279a88d6af0,
     type: 3}
   pathTile: {fileID: 7839899432390475279, guid: 4c83ef1ae6aad0f4c9916980fdb3ad5e,
     type: 3}
   baseTile: {fileID: 380332135521941529, guid: c2a12e57abd2231408b19d9a56667e36, type: 3}
   secondsPerEnemy: 1
+  secondsBetweenWaves: 10
 --- !u!4 &966612461
 Transform:
   m_ObjectHideFlags: 0

@@ -8,7 +8,7 @@ public class Tower : AttackingEntity
 
     float elapsedTime;
     GameObject player;
-    GameObject baseVar;
+    public GameObject baseVar;
     public bool isSpecial = false;
 
     MapManager mapManager;

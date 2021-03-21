@@ -23,6 +23,7 @@ public class Projectile : MonoBehaviour
 		if(target == null)
         {
 			Destroy(gameObject);
+			return;
         }
 
 		//get target position

@@ -4,27 +4,8 @@ using UnityEngine;
 
 public class Drops : MonoBehaviour
 {
-    [SerializeField]
-    float speed = 5f;
-    [SerializeField]
-    float attractRange = 5f;
-    
     private int birdValue = 0;
     private int wheelValue = 0;
-
-    GameObject player;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        player = GameObject.FindGameObjectWithTag("Player");
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        MoveToPlayer();
-    }
 
     public void SetDropValues(int bird, int wheel)
     {
@@ -32,17 +13,9 @@ public class Drops : MonoBehaviour
         wheelValue = wheel;
     }
 
-    private void MoveToPlayer()
-    {
-        if (Vector3.Distance(player.transform.position, transform.position) <= attractRange)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, player.transform.position, speed * Time.deltaTime);
-        }
-        
-    }
-
     void OnTriggerEnter2D(Collider2D other)
     {
+        // If the drop itself collides with the player, the player picks up the drop
         if (other.gameObject.tag == "Player")
         {
             other.gameObject.GetComponent<Avatar>().numBirds += birdValue;
@@ -50,5 +23,4 @@ public class Drops : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
 }

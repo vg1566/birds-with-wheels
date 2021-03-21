@@ -4,16 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Anything that can fill a map space. On generation, this would mean one of:
+/// Anything that can fill a space on the map. For now, that's:
 ///   <list type="number">
-///     <item>Empty - self-explanatory</item>
-///     <item>Path - Navigable path enemies can travel on.</item>
-///     <item>Base - The player's base they're protecting</item>
-///   </list>
-/// Once the game gets going, the following may also occupy a space:
-///   <list type="number">
-///     <item>Player</item>
-///     <item>Tower</item>
+///     <item><see cref="MapTiles.Empty"/> - Nothing, empty space</item>
+///     <item><see cref="MapTiles.Path"/> - Navigable path enemies can travel on.</item>
+///     <item><see cref="MapTiles.Base"/> - The player's base they're protecting</item>
+///     <item><see cref="MapTiles.EnemyStart"/>Where enemies are spawned in the map. 
+///           Appearance-wise, this is just a normal path tile.</item>
 ///   </list>
 /// </summary>
 public enum MapTiles
@@ -22,8 +19,7 @@ public enum MapTiles
     Path = 1,
     Base = 2,
 
-    Player = 99,
-    Tower = 98,
+    EnemyStart = 99
 }
 
 /// <summary>
@@ -35,10 +31,13 @@ public enum MapTiles
 ///     This includes:
 ///     <list type="bullet">
 ///       <item>Generating the map using <see cref="GenerateMap"/></item>
-///       <item>Spawning waves of enemies from <see cref="currentWave"/></item>
-///       <item>Storing future waves that will be spawned in <see cref="waves"/></item>
-///       <item>Keeping track of where everything is on the map in <see cref="mapOutline"/></item>
-///       <item>Handling and validating tower placement in <see cref="PlaceTower(GameObject, int, int)"/></item>
+///       <item>Spawning enemies from <see cref="currentWaveEnemies"/> using <see cref="SpawnEnemy"/> and <see cref="secondsPerEnemy"/></item>
+///       <item>Creating new waves using <see cref="CreateWave(int, int)"/> and <see cref="StartWave"/></item>
+///       <item>Timing spawning of new waves using <see cref="secondsBetweenWaves"/> and <see cref="WaitThenSpawnNextWave"/></item>
+///       <item>Keeping track of the layout of the map in <see cref="mapOutline"/></item>
+///       <item>Keeping track of towers on the map using <see cref="towerGrid"/></item>
+///       <item>Handling and validating tower placement in <see cref="PlaceTower(int, int, TowerType)"/></item>
+///       <item>Hendling and validating removal of towers in <see cref="RemoveTower(int, int, bool)"/></item>
 ///     </list>
 ///   </para>
 /// </summary>
@@ -46,29 +45,39 @@ public class MapManager : MonoBehaviour
 {
     // All the towers in the scene
     private List<Entity> towers;
-    // All the waves in the game
-    private Queue<Queue<Enemy>> waves;
-    // The enemies that will be spawned into the level
-    private Queue<Enemy> currentWave;
+    // What wave we're on
+    private int currentWave = 1;
+    // The enemies that will be spawned into the level this wave
+    private Queue<Enemy> currentWaveEnemies;
     // The enemies that are already spawned into the level
     // TODO: assess if we need this
     private List<Entity> enemiesOnScreen;
-    // The player avatar
-    public Avatar avatar;
+    // The player base, need to pass to Tower
+    private GameObject playerBase;
     // Parent Transform to any created towers
     private Transform towerContainer;
+    // Where the enemy spawns
+    private Vector3 enemySpawnPosition;
 
     [SerializeField]
     private GameObject basicEnemy;
     [SerializeField]
     private GameObject buffEnemy;
 
-    [SerializeField]
-    private GameObject basicTower;
-    [SerializeField]
-    private GameObject specialTower;
+    // Tower prefab struct will be visible in inspector
+    [Serializable]
+    public struct TowerPrefab
+    {
+        public TowerType towerType;
+        public GameObject towerGameObject;
+    }
 
-    private Dictionary<TowerType, GameObject> towerPrefabs;
+    [SerializeField]
+    [Tooltip("This array of structs will be turned into a dictionary of " +
+        "<TowerType, GameObject> and will be used for placing towers.")]
+    private TowerPrefab[] towerPrefabs;
+
+    private Dictionary<TowerType, GameObject> towerPrefabDictionary;
 
     // Prefabs used to generate the map from the below array
     [SerializeField]
@@ -90,14 +99,26 @@ public class MapManager : MonoBehaviour
     private float secondsBetweenWaves = 10;
 
     // The map, represented as ints based on the MapSquares enum
-    private KeyValuePair<MapTiles, GameObject>[,] mapGrid;
+    private struct TowerGridSpace
+    {
+        public TowerType? type;
+        public GameObject tower;
+
+        public TowerGridSpace(TowerType? towerType, GameObject towerGameObject)
+        {
+            type = towerType;
+            tower = towerGameObject;
+        }
+    }
+
+    private TowerGridSpace[,] towerGrid;
 
     // This is how the map will be generated
     private readonly int[,] mapOutline =
     {
             { 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
             { 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2 },
+            {99, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2 },
             { 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
             { 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
     };
@@ -105,58 +126,36 @@ public class MapManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        towerPrefabs = new Dictionary<TowerType, GameObject> 
+        // If there are no prefabs, don't start the game.
+        if (towerPrefabs == null || towerPrefabs.Length == 0)
         {
-            { TowerType.Basic, basicTower },
-            { TowerType.Special, specialTower }
-        };
+            throw new InvalidOperationException("Cannot begin the game with no tower prefabs.");
+        }
+
+        // Populate tower prefab dictionary with all the tower prefabs created in the inspector.
+        towerPrefabDictionary = new Dictionary<TowerType, GameObject>();
+        for (int i = 0; i < towerPrefabs.Length; i++)
+        {
+            // Prefab to add
+            TowerPrefab pta = towerPrefabs[i];
+            towerPrefabDictionary.Add(pta.towerType, pta.towerGameObject);
+        }
 
         towerContainer = new GameObject("Towers").transform;
 
-        enemiesOnScreen = new List<Entity>();
         towers = new List<Entity>();
-        currentWave = new Queue<Enemy>();
-
-        #region Wave initialization
-        waves = new Queue<Queue<Enemy>>();
-
-        // Make waves
-        for (int i = 1; i < 12; i++)
-        {
-            int basicEnemies = i % 4;
-            int buffEnemies = i / 4;
-
-            waves.Enqueue(CreateWave(basicEnemies, buffEnemies));
-        }
-
-        #endregion
+        enemiesOnScreen = new List<Entity>();
+        currentWaveEnemies = new Queue<Enemy>();
 
         // Generate the map based on mapOutline
-        mapGrid = new KeyValuePair<MapTiles, GameObject>[mapOutline.GetLength(0), mapOutline.GetLength(1)];
+        towerGrid = new TowerGridSpace[mapOutline.GetLength(0), mapOutline.GetLength(1)];
         GenerateMap();
+
+        // Center the camera to the map
+        CenterCamera();
 
         // Start the game
         StartWave();
-    }
-
-    /// <summary>
-    /// Creates a wave with the specified number of each enemy type
-    /// </summary>
-    /// <param name="basicEnemies">Number of basic enemies in the wave</param>
-    /// <returns>A stack with the specified amount of enemies</returns>
-    private Queue<Enemy> CreateWave(int basicEnemies = 0, int buffEnemies = 0)
-    {
-        Queue<Enemy> enemies = new Queue<Enemy>();
-        for (int i = 0; i < basicEnemies; i++)
-        {
-            enemies.Enqueue(basicEnemy.GetComponent<Enemy>());
-        }
-        for (int i = 0; i < buffEnemies; i++)
-        {
-            enemies.Enqueue(buffEnemy.GetComponent<Enemy>());
-        }
-
-        return enemies;
     }
 
     private void Update()
@@ -183,6 +182,19 @@ public class MapManager : MonoBehaviour
     // ------------------------------------
     // --------  HELPER FUNCTIONS  --------
     // ------------------------------------
+
+    private void CenterCamera()
+    {
+        int rows = mapOutline.GetLength(0);
+        int columns = mapOutline.GetLength(1);
+
+        // Lowest map positions are 0,0 so we only need the highest
+        // in order to center the camera
+        float furthestRight = GetPositionAtMapCoordinate(columns - 1, 0).x;
+        float furthestUp = GetPositionAtMapCoordinate(0, rows - 1).y;
+
+        Camera.main.transform.position = new Vector3(furthestRight / 2.0f, furthestUp / 2.0f, Camera.main.transform.position.z);
+    }
 
     /// <summary>
     /// Returns the world position of the map square at the specified coordinate
@@ -218,9 +230,9 @@ public class MapManager : MonoBehaviour
         Transform mapParent = new GameObject("MapParent").transform;
 
         // Iterate through the every map square
-        for (int i = 0; i < mapGrid.GetLength(0); i++)
+        for (int i = 0; i < mapOutline.GetLength(0); i++)
         {
-            for (int j = 0; j < mapGrid.GetLength(1); j++)
+            for (int j = 0; j < mapOutline.GetLength(1); j++)
             {
                 // Get the current map square and create an object of 
                 // the proper type
@@ -232,24 +244,26 @@ public class MapManager : MonoBehaviour
                     case MapTiles.Empty:
                         newMapSquare = Instantiate(emptyTile, mapParent.transform);
                         break;
+                    case MapTiles.EnemyStart:
+                        enemySpawnPosition = GetPositionAtMapCoordinate(j, i);
+                        newMapSquare = Instantiate(pathTile, mapParent.transform);
+                        break;
                     case MapTiles.Path:
                         newMapSquare = Instantiate(pathTile, mapParent.transform);
                         break;
                     case MapTiles.Base:
                         newMapSquare = Instantiate(baseTile, mapParent.transform);
                         newMapSquare.GetComponent<Base>().mapManager = gameObject;
+                        playerBase = newMapSquare;
                         break;
                     default:
                         throw new InvalidOperationException(
-                            $"Invalid map square specified : '{mapGrid[i, j]}' at coordinate {i}, {j}");
+                            $"Invalid map square specified : '{mapOutline[i, j]}' at coordinate {i}, {j}");
                 }
 
                 // Set position and name
                 newMapSquare.transform.position = new Vector3(j, i);
                 newMapSquare.name += $" at index {i}, {j}";
-
-                // Add the new tile to the mapGrid
-                mapGrid[i, j] = new KeyValuePair<MapTiles, GameObject>(mapSquareType, newMapSquare);
             }
         }
     }
@@ -271,18 +285,20 @@ public class MapManager : MonoBehaviour
     /// <param name="x">X map coord</param>
     /// <param name="y">Y map coord</param>
     /// <param name="towerType">The tower to place</param>
-    public void PlaceTower(int x, int y, TowerType towerType)
+    /// <returns>Whether the tower placement succeeded</returns>
+    public bool PlaceTower(int x, int y, TowerType towerType)
     {
         // If the map space is not empty, don't place a tower
-        if (mapGrid[y, x].Key != MapTiles.Empty)
+        if (towerGrid[y, x].tower != null
+            || mapOutline[y, x] != (int)MapTiles.Empty)
         {
             // TODO: Give player feedback that tower placement failed
             Debug.Log("Tower placement failed");
-            return;
+            return false;
         }
 
         // Make a new tower of the specified type, at the correct map position
-        GameObject newTower = Instantiate(towerPrefabs[towerType], towerContainer);
+        GameObject newTower = Instantiate(towerPrefabDictionary[towerType], towerContainer);
         newTower.transform.position = GetPositionAtMapCoordinate(x, y)
             + new Vector3(0, 0, -1);
 
@@ -296,18 +312,22 @@ public class MapManager : MonoBehaviour
         towers.Add(towerScript);
         towerScript.SetMapManager(this);
 
-        // Update mapGrid to reflect new tower
-        mapGrid[y, x] = new KeyValuePair<MapTiles, GameObject>(MapTiles.Tower, newTower);
+        // Update towerGrid to reflect new tower
+        towerGrid[y, x] = new TowerGridSpace(towerType, newTower);
+
+        // A tower was placed
+        return true;
     }
 
     /// <summary>
     /// Removes tower at the given world position
     /// </summary>
     /// <param name="position">World position of the tower to remove</param>
-    public void RemoveTower(Vector3 position)
+    /// <returns>Type of the destroyed tower, or null if there was no tower on the space</returns>
+    public TowerType? RemoveTower(Vector3 position)
     {
         Vector2Int mapCoords = GetMapCoordinateAtWorldPosition(position);
-        RemoveTower(mapCoords.x, mapCoords.y);
+        return RemoveTower(mapCoords.x, mapCoords.y);
     }
     
     /// <summary>
@@ -316,29 +336,64 @@ public class MapManager : MonoBehaviour
     /// <param name="x">X coord of the tower in map coords</param>
     /// <param name="y">Y coord of the tower in map coords</param>
     /// <param name="dropResources">Whether this tower should drop anything</param>
-    public void RemoveTower(int x, int y, bool dropResources = false)
+    /// <returns>Type of the destroyed tower, or null if there was no tower on the space</returns>
+    public TowerType? RemoveTower(int x, int y, bool dropResources = false)
     {
-        towers.Remove(mapGrid[y, x].Value.GetComponent<Tower>());
-        Destroy(mapGrid[y, x].Value);
+        // If there's no tower on this space, don't do anything
+        TowerGridSpace towerInfo = towerGrid[y, x];
+        if (towerInfo.tower == null)
+        {
+            return null;
+        }
 
-        // Replace the mapGrid square with the empty one under it
-        mapGrid[y, x] = new KeyValuePair<MapTiles, GameObject>(MapTiles.Empty, GameObject.Find($"Empty at index {y}, {x}"));
+        // Get the tower, remove it from the list of towers, then save its type
+        Tower tower = towerInfo.tower.GetComponent<Tower>();
+        towers.Remove(tower);
+        TowerType type = towerInfo.type.Value;
+
+        // Destroy the tower
+        Destroy(towerInfo.tower);
+
+        // Replace the TowerGridSpace with an empty one
+        towerGrid[y, x] = new TowerGridSpace(null, null);
+        return type;
     }
 
     /// <summary>
     /// Pops the next wave of enemies from <see cref="waves"/> 
-    /// into <see cref="currentWave"/> and starts the new wave
+    /// into <see cref="currentWaveEnemies"/> and starts the new wave
     /// </summary>
     private void StartWave()
     {
-        // TODO: Get Enemy class and set enemies stack 
-        // to whatever we want the wave to look like
-        currentWave = waves.Dequeue();
+        int basicEnemies = currentWave % 4;
+        int buffEnemies = currentWave / 4;
+
+        currentWaveEnemies = CreateWave(basicEnemies, buffEnemies);
         StartCoroutine(SpawnEnemy());
     }
 
     /// <summary>
-    /// Spawns enemy from <see cref="currentWave"/> 
+    /// Creates a wave with the specified number of each enemy type
+    /// </summary>
+    /// <param name="basicEnemies">Number of basic enemies in the wave</param>
+    /// <returns>A stack with the specified amount of enemies</returns>
+    private Queue<Enemy> CreateWave(int basicEnemies = 0, int buffEnemies = 0)
+    {
+        Queue<Enemy> enemies = new Queue<Enemy>();
+        for (int i = 0; i < basicEnemies; i++)
+        {
+            enemies.Enqueue(basicEnemy.GetComponent<Enemy>());
+        }
+        for (int i = 0; i < buffEnemies; i++)
+        {
+            enemies.Enqueue(buffEnemy.GetComponent<Enemy>());
+        }
+
+        return enemies;
+    }
+
+    /// <summary>
+    /// Spawns enemy from <see cref="currentWaveEnemies"/> 
     /// every <see cref="secondsPerEnemy"/> seconds
     /// </summary>
     /// <returns></returns>
@@ -348,25 +403,27 @@ public class MapManager : MonoBehaviour
 
         // Spawn a new enemy after waiting secondsPerEnemy seconds
         
-        GameObject newEnemy = Instantiate(currentWave.Dequeue().gameObject);
-        newEnemy.transform.position = mapGrid[2, 0].Value.transform.position;
+        GameObject newEnemy = Instantiate(currentWaveEnemies.Dequeue().gameObject);
+        newEnemy.transform.position = enemySpawnPosition;
         enemiesOnScreen.Add(newEnemy.GetComponent<Enemy>());
-        
+        newEnemy.GetComponent<Enemy>().mapManager = this;
+        //newEnemy.GetComponent<Enemy>().SetMap(mapOutline);
 
         // Only continue to spawn enemies 
         // if there are more to spawn.
-        if (currentWave.Count != 0)
+        if (currentWaveEnemies.Count != 0)
         {
             StartCoroutine(SpawnEnemy());
         }
         else
         {
-            // Start the next wave in 10 seconds
-            StartCoroutine(SpawnNextWaveInSeconds());
+            // move to the next wave
+            currentWave++;
+            StartCoroutine(WaitThenSpawnNextWave());
         }
     }
 
-    private IEnumerator SpawnNextWaveInSeconds()
+    private IEnumerator WaitThenSpawnNextWave()
     {
         yield return new WaitForSeconds(secondsBetweenWaves);
         StartWave();
