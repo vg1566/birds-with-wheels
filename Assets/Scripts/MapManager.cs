@@ -95,11 +95,11 @@ public class MapManager : MonoBehaviour
     // This is how the map will be generated
     private readonly int[,] mapOutline =
     {
-            { 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2 },
-            { 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+            { 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 },
+            { 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
+            { 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 2 },
+            { 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
+            { 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 }
     };
 
     // Start is called before the first frame update
@@ -352,6 +352,10 @@ public class MapManager : MonoBehaviour
         
         GameObject newEnemy = Instantiate(currentWave.Dequeue().gameObject);
         newEnemy.transform.position = mapGrid[2, 0].Value.transform.position;
+		
+		//LARS' TESTING STUFF
+		newEnemy.GetComponent<Enemy>().SetMap(this.mapOutline);
+		
         enemiesOnScreen.Add(newEnemy.GetComponent<Enemy>());
         
 

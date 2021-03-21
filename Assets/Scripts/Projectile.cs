@@ -26,7 +26,7 @@ public class Projectile : MonoBehaviour
         }
 
 		//get target position
-		targetPos = target.transform.position;
+		targetPos = target != null ? target.transform.position : new Vector3();
 		//point at target
 		direction = (targetPos - this.transform.position).normalized;
 

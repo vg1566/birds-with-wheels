@@ -8,20 +8,21 @@ public class Tower : AttackingEntity
 
     float elapsedTime;
     GameObject baseVar;
+	  public bool canFire = true;
 
     MapManager mapManager;
 
     // Start is called before the first frame update
     void Start()
     {
-        baseVar = GameObject.Find("Base(Clone) at index 2, 13");
+		  baseVar = GameObject.Find("Base(Clone) at index 2, 13");
     }
 
     // Update is called once per frame
     void Update()
     {
         elapsedTime += Time.deltaTime;
-        if (target != null && elapsedTime > rateOfFire)
+        if (target != null && elapsedTime > rateOfFire && canFire)
         {
             FireProjectile();
             elapsedTime = 0f;
