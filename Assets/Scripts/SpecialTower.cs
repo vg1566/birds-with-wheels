@@ -39,7 +39,7 @@ public class SpecialTower : Tower
     /// </summary>
     protected override void Die()
     {
-        player.GetComponent<Avatar>().TowerDie();
+        player.TowerDie();
         base.Die();
     }
 

@@ -37,13 +37,6 @@ public class Base : Entity
     /// </summary>
     protected override void Die()
     {
-        foreach (Transform child in transform.parent)
-        {
-            if(child != transform)
-            {
-                Destroy(child.gameObject);
-            }
-        }
         gameOver = true;
     }
 }

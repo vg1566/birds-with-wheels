@@ -38,11 +38,6 @@ public class Avatar : Entity
     [HideInInspector]
     public bool respawning = false;
 
-    // TODO: swap to dictionary
-    // Stores costs of tower types at the index of the enum value. e.g. a tower.Basic tower costs birdCosts[tower.Basic] birds and wheelCosts[tower.Basic] wheels
-    public int[] birdcosts = { 1, 0 };
-    public int[] wheelCosts = { 1, 0 };
-
     public struct TowerCost
     {
         public int birds;
