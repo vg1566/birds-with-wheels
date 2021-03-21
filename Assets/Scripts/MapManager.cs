@@ -150,7 +150,6 @@ public class MapManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-		//TODO figure out why this doesn't work in menu
 		Time.timeScale = 1f;
 
 		// If there are no prefabs, don't start the game.

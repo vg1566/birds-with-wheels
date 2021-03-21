@@ -17,7 +17,6 @@ public class Menu : MonoBehaviour
 	public void StartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-		Time.timeScale = 1f;
     }
 
     // Start is called before the first frame update
@@ -64,14 +63,11 @@ public class Menu : MonoBehaviour
 
     public void LoadMainMenu()
     {
-        //Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
     }
 
     public void Restart()
-    {
-		gameOverMenu.SetActive(false);
-		Time.timeScale = 1f;
+    {		
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 	}
 }
