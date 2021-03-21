@@ -146,11 +146,15 @@ MonoBehaviour:
   hp: 4
   speed: 7
   position: {x: 0, y: 0, z: 0}
+  isDead: 0
+  isTower: 0
   specialTower: {fileID: 6404470990273151200, guid: dfc7beccb2512dc4eac9e9ab3196bebb,
     type: 3}
   playerBase: {fileID: 0}
   mapManager: {fileID: 0}
-  numWheels: 0
-  numBirds: 0
+  numWheels: 1
+  numBirds: 1
+  respawnTimer: 0
+  respawning: 0
   birdcosts: 0100000000000000
   wheelCosts: 0100000000000000

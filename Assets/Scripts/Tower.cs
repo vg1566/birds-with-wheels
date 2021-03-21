@@ -7,24 +7,22 @@ public class Tower : AttackingEntity
     public GameObject projectilePrefab;
 
     float elapsedTime;
-    GameObject player;
     public GameObject baseVar;
-    public bool isSpecial = false;
+	public bool canFire = true;
 
     MapManager mapManager;
 
     // Start is called before the first frame update
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
-        baseVar = GameObject.Find("Base(Clone) at index 2, 13");
+		  baseVar = GameObject.Find("Base(Clone) at index 2, 13");
     }
 
     // Update is called once per frame
     void Update()
     {
         elapsedTime += Time.deltaTime;
-        if (target != null && elapsedTime > rateOfFire)
+        if (target != null && elapsedTime > rateOfFire && canFire)
         {
             FireProjectile();
             elapsedTime = 0f;
@@ -48,11 +46,6 @@ public class Tower : AttackingEntity
 
     protected override void Die()
     {
-        if (isSpecial)
-        {
-            baseVar.GetComponent<Base>().StartRespawn();
-        }
-
         mapManager.RemoveTower(transform.position);
     }
 }

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5804882085861615898}
   - component: {fileID: -2562236098861435620}
   - component: {fileID: 7330897344295367227}
-  - component: {fileID: 2505352506872927954}
+  - component: {fileID: -3003629998387822408}
   m_Layer: 0
   m_Name: SpecialTower
   m_TagString: Untagged
@@ -131,7 +131,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.16, y: 0.16}
   m_EdgeRadius: 0
---- !u!114 &2505352506872927954
+--- !u!114 &-3003629998387822408
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -140,14 +140,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 6404470990273151200}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50f13417c4c6eb44783dd1cecd9a3379, type: 3}
+  m_Script: {fileID: 11500000, guid: 7fd155a6906522e44a9fd89013b16ee1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 6
   speed: 0
-  attackPower: 1
-  range: 5
-  rateOfFire: 0.5
-  projectilePrefab: {fileID: 3213211799076024093, guid: 2bf496f206117b649bd55f91e1cf1df4,
-    type: 3}
-  isSpecial: 1
+  attackPower: 0
+  range: 1
+  rateOfFire: 0
+  projectilePrefab: {fileID: 0}
+  mode: 1
+  player: {fileID: 0}

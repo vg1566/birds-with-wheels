@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -116,11 +116,11 @@ public class MapManager : MonoBehaviour
     // This is how the map will be generated
     private readonly int[,] mapOutline =
     {
-            { 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            {99, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2 },
-            { 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+            { 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 },
+            { 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
+            { 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 2 },
+            { 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
+            { 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 }
     };
 
     // Start is called before the first frame update
@@ -273,10 +273,11 @@ public class MapManager : MonoBehaviour
     /// </summary>
     /// <param name="position">World position to place the tower at</param>
     /// <param name="towerType">The type  of tower to place</param>
-    public void PlaceTower(Vector3 position, TowerType towerType)
+    public bool PlaceTower(Vector3 position, TowerType towerType)
     {
         Vector2Int mapCoords = GetMapCoordinateAtWorldPosition(position);
         PlaceTower(mapCoords.x, mapCoords.y, towerType);
+        return true;
     }
 
     /// <summary>
@@ -403,8 +404,12 @@ public class MapManager : MonoBehaviour
 
         // Spawn a new enemy after waiting secondsPerEnemy seconds
         
-        GameObject newEnemy = Instantiate(currentWaveEnemies.Dequeue().gameObject);
-        newEnemy.transform.position = enemySpawnPosition;
+        GameObject newEnemy = Instantiate(currentWave.Dequeue().gameObject);
+        newEnemy.transform.position = mapGrid[2, 0].Value.transform.position;
+		
+		//LARS' TESTING STUFF
+		newEnemy.GetComponent<Enemy>().SetMap(this.mapOutline);
+		
         enemiesOnScreen.Add(newEnemy.GetComponent<Enemy>());
         newEnemy.GetComponent<Enemy>().mapManager = this;
         //newEnemy.GetComponent<Enemy>().SetMap(mapOutline);
