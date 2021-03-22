@@ -170,6 +170,7 @@ public class Avatar : Entity
             isTower = true;
             gameObject.GetComponent<Renderer>().enabled = false;
 			position = playerBase.transform.position;
+			transform.position = position;
             status = "Special Tower";
         }
     }
