@@ -1005,7 +1005,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 596.6, y: -150}
+  m_AnchoredPosition: {x: 630.29, y: -150}
   m_SizeDelta: {x: 363.18384, y: 40.477318}
   m_Pivot: {x: 1.440099, y: 0.3650411}
 --- !u!114 &530293550
@@ -1273,7 +1273,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -164, y: -144.54}
+  m_AnchoredPosition: {x: -234.42, y: -144.54}
   m_SizeDelta: {x: 209.6831, y: 40.47502}
   m_Pivot: {x: 0.61022294, y: 0.49999994}
 --- !u!114 &760932994
@@ -2454,8 +2454,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -12.351, y: -61}
-  m_SizeDelta: {x: 487.45782, y: 40.47699}
+  m_AnchoredPosition: {x: -17.842, y: -62}
+  m_SizeDelta: {x: 704.18097, y: 40.47699}
   m_Pivot: {x: 0.4746633, y: 1}
 --- !u!114 &1475928236
 MonoBehaviour:
@@ -2476,7 +2476,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Tower Transformations
+  m_text: Player To Tower Transformations
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2503,8 +2503,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 40
-  m_fontSizeBase: 40
+  m_fontSize: 36
+  m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
