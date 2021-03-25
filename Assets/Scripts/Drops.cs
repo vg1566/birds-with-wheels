@@ -20,7 +20,7 @@ public class Drops : MonoBehaviour
         {
             other.gameObject.GetComponent<Avatar>().numBirds += birdValue;
             other.gameObject.GetComponent<Avatar>().numWheels += wheelValue;
-            Destroy(gameObject);
+            Destroy(transform.parent.gameObject);
         }
     }
 }
