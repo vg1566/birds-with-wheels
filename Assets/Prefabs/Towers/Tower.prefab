@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1014081754798482352}
   - component: {fileID: -5745963949466712500}
   - component: {fileID: -417428902809187691}
-  - component: {fileID: 3026724917928670099}
+  - component: {fileID: 4408533422071300756}
   - component: {fileID: -947990794220584146}
   m_Layer: 0
   m_Name: Tower
@@ -73,8 +73,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: a519c32bae18c1c44a32d6f1ddc3251a, type: 3}
-  m_Color: {r: 1, g: 0.48584908, b: 0.52927047, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 502061b54c0cb1441a2b3245f36c3131, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -105,7 +105,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!61 &3026724917928670099
+--- !u!61 &4408533422071300756
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -129,7 +129,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.16, y: 0.16}
+  m_Size: {x: 2.56, y: 2.56}
   m_EdgeRadius: 0
 --- !u!114 &-947990794220584146
 MonoBehaviour:
@@ -148,7 +148,9 @@ MonoBehaviour:
   attackPower: 1
   range: 3
   rateOfFire: 1
-  projectilePrefab: {fileID: 3213211799076024093, guid: f96f89cb6956dc844b1ef346c665d4cc,
+  shootNoise: {fileID: 8300000, guid: 9491da8ea3d3c3e4ebfe94b105adc465, type: 3}
+  shootNoiseSource: {fileID: 0}
+  projectilePrefab: {fileID: 3213211799076024093, guid: 3635f62d10d4cc6499d58b1e2bd552da,
     type: 3}
   baseVar: {fileID: 0}
   canFire: 1

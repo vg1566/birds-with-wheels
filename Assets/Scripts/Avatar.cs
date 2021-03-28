@@ -37,6 +37,8 @@ public class Avatar : Entity
     [HideInInspector]
     public bool respawning = false;
 
+    public bool cheats = false;
+
     public struct TowerCost
     {
         public int birds;
@@ -70,11 +72,11 @@ public class Avatar : Entity
     // Update is called once per frame
     void Update()
     {
-        if(!isDead && !isTower)
+        if (!isDead && !isTower)
         {
             Move();
         }
-        if(respawning)
+        if (respawning)
         {
             respawnTimer += Time.deltaTime;
             if (respawnTimer > totalRespawnTime)
@@ -87,6 +89,7 @@ public class Avatar : Entity
                 transform.position = position;
                 gameObject.GetComponent<Renderer>().enabled = true;
                 isDead = false;
+                hp = 4;
             }
         }
     }
@@ -132,15 +135,25 @@ public class Avatar : Entity
         if (Input.GetKey(KeyCode.D))
         {
             direction += Vector3.right;
-		}
-		if(Input.GetKey(KeyCode.Alpha1))PlaceTower(TowerType.Basic);
-		if(Input.GetKey(KeyCode.Alpha2))PlaceTower(TowerType.Buff);
-		if(Input.GetKey(KeyCode.Alpha3))PlaceTower(TowerType.Angry);
-		if(Input.GetKey(KeyCode.Alpha4))PlaceTower(TowerType.Vigilant);
-		if(Input.GetKey(KeyCode.Alpha5)) TransformIntoTower(TowerType.SpecialOffense);
-		if(Input.GetKey(KeyCode.Alpha6)) TransformIntoTower(TowerType.SpecialDefense);
+        }
+        // Tower placement and breaking
+        if (Input.GetKeyDown(KeyCode.Alpha1)) PlaceTower(TowerType.Basic);
+        if (Input.GetKeyDown(KeyCode.Alpha2)) PlaceTower(TowerType.Buff);
+        if (Input.GetKeyDown(KeyCode.Alpha3)) PlaceTower(TowerType.Angry);
+        if (Input.GetKeyDown(KeyCode.Alpha4)) PlaceTower(TowerType.Vigilant);
+        if (Input.GetKeyDown(KeyCode.Alpha5)) TransformIntoTower(TowerType.SpecialOffense);
+        if (Input.GetKeyDown(KeyCode.Alpha6)) TransformIntoTower(TowerType.SpecialDefense);
+        if (Input.GetKeyDown(KeyCode.F)) BreakTower();
 
-		position += direction.normalized * speed * Time.deltaTime;
+        // Cheat mode toggle
+        if (Input.GetKeyDown(KeyCode.Semicolon)) cheats = !cheats;
+
+        position += direction.normalized * speed * Time.deltaTime;
+
+        // Check bounds
+        position.y = Mathf.Clamp(position.y, 1.8f, 8.75f);
+        position.x = Mathf.Clamp(position.x, 1.1f, 18.8f);
+
         transform.position = position;
     }
 
@@ -151,7 +164,7 @@ public class Avatar : Entity
     {
         if (numBirds >= prices[towerType].birds && numWheels >= prices[towerType].wheels)
         {
-            if(mapManager.GetComponent<MapManager>().PlaceTower(position, towerType))
+            if (mapManager.GetComponent<MapManager>().PlaceTower(position, towerType))
             {
                 numBirds -= prices[towerType].birds;
                 numWheels -= prices[towerType].wheels;
@@ -169,8 +182,8 @@ public class Avatar : Entity
         {
             isTower = true;
             gameObject.GetComponent<Renderer>().enabled = false;
-			position = playerBase.transform.position;
-			transform.position = position;
+            position = playerBase.transform.position;
+            transform.position = position;
             status = "Special Tower";
         }
     }
@@ -181,24 +194,39 @@ public class Avatar : Entity
     public void BreakTower()
     {
         TowerType? towerType = mapManager.GetComponent<MapManager>().RemoveTower(position);
-		if (towerType.HasValue)
-		{
-			numBirds += prices[towerType.Value].birds;
-			numWheels += prices[towerType.Value].wheels;
-		}
-	}
+        if (towerType.HasValue)
+        {
+            numBirds += prices[towerType.Value].birds;
+            numWheels += prices[towerType.Value].wheels;
+        }
+    }
 
     /// <summary>
     /// Displays stats and tower placement buttons
     /// </summary>
     void OnGUI()
     {
+        // don't display ui if game is over
+        if (playerBase.GetComponent<Base>().gameOver)
+            return;
+
         GUILayout.BeginArea(new Rect(0, 0, 90, 100));
         GUILayout.Box("Birds: " + numBirds);
         GUILayout.Box("Wheels: " + numWheels);
         GUILayout.EndArea();
 
-        if(isDead || isTower)
+        GUILayout.BeginArea(new Rect(0, (Screen.height - 50), 200, 50));
+        if (respawning)
+        {
+            GUILayout.Box("Status: " + status);
+            GUILayout.Box("Timer: " + (totalRespawnTime - respawnTimer));
+        }
+        GUILayout.EndArea();
+
+        if (!cheats) 
+            return;
+
+        if (isDead || isTower)
         {
             GUILayout.BeginArea(new Rect(0, (Screen.height - 50), 200, 50));
             GUILayout.Box("Status: " + status);
@@ -208,7 +236,7 @@ public class Avatar : Entity
             }
             GUILayout.EndArea();
         }
-        else if(!isDead && !isTower)
+        else if (!isDead && !isTower)
         {
             GUILayout.BeginArea(new Rect(0, (Screen.height - 150), 200, 150));
             if (GUILayout.Button("Break nearest tower"))

@@ -20,15 +20,27 @@ public enum MapTiles
     Path = 1,
     Base = 2,
 
+    CloudEdgeTop = 3,
+    CloudEdgeBottom = 4,
+    CloudEdgeLeft = 5,
+    CloudEdgeRight = 6,
+
+    CloudCornerTopLeft = 7,
+    CloudCornerTopRight = 8,
+    CloudCornerBottomLeft = 9,
+    CloudCornerBottomRight = 10,
+
+    ActuallyEmpty = 11,
+
     EnemyStart = 99
 }
 
 public enum EnemyType
 {
-	Basic,
-	Buff,
-	Speedy,
-	Thief
+    Basic,
+    Buff,
+    Speedy,
+    Thief
 }
 
 /// <summary>
@@ -69,15 +81,12 @@ public class MapManager : MonoBehaviour
     private Vector3 enemySpawnPosition;
 
     [SerializeField]
-    private GameObject basicEnemy;
-	[SerializeField]
-	private GameObject buffEnemy;
-	[SerializeField]
-	private GameObject thiefEnemy;
-	[SerializeField]
-	//private GameObject buffEnemy;
-	// Tower prefab struct will be visible in inspector
-	[Serializable]
+    private AudioSource soundSource;
+
+    [SerializeField]
+    //private GameObject buffEnemy;
+    // Tower prefab struct will be visible in inspector
+    [Serializable]
     public struct TowerPrefab
     {
         public TowerType towerType;
@@ -91,13 +100,13 @@ public class MapManager : MonoBehaviour
 
     private Dictionary<TowerType, GameObject> towerPrefabDictionary;
 
-	[SerializeField]
-	private EnemyPrefab[] enemyPrefabs;
+    [SerializeField]
+    private EnemyPrefab[] enemyPrefabs;
 
-	private Dictionary<EnemyType, GameObject> enemyPrefabDictionary;
+    private Dictionary<EnemyType, GameObject> enemyPrefabDictionary;
 
-	// Prefabs used to generate the map from the below array
-	[SerializeField]
+    // Prefabs used to generate the map from the below array
+    [SerializeField]
     [Tooltip("The tile that will be used as empty space")]
     private GameObject emptyTile;
     [SerializeField]
@@ -106,6 +115,29 @@ public class MapManager : MonoBehaviour
     [SerializeField]
     [Tooltip("The tile that will be used as the base")]
     private GameObject baseTile;
+
+    #region Cloud Prefabs
+
+    [SerializeField]
+    private GameObject CloudEdgeTop;
+    [SerializeField]
+    private GameObject CloudEdgeBottom;
+    [SerializeField]
+    private GameObject CloudEdgeLeft;
+    [SerializeField]
+    private GameObject CloudEdgeRight;
+
+    [SerializeField]
+    private GameObject CloudCornerTopLeft;
+    [SerializeField]
+    private GameObject CloudCornerTopRight;
+    [SerializeField]
+    private GameObject CloudCornerBottomLeft;
+    [SerializeField]
+    private GameObject CloudCornerBottomRight;
+
+
+    #endregion
 
     [SerializeField]
     [Tooltip("How many seconds pass before " +
@@ -127,39 +159,55 @@ public class MapManager : MonoBehaviour
             tower = towerGameObject;
         }
     }
-	
-	[Serializable]
-	public struct EnemyPrefab
-	{
-		public EnemyType enemyType;
-		public GameObject enemyGameObject;
-	}
 
-	private TowerGridSpace[,] towerGrid;
+    [Serializable]
+    public struct EnemyPrefab
+    {
+        public EnemyType enemyType;
+        public GameObject enemyGameObject;
+    }
+
+    private TowerGridSpace[,] towerGrid;
+
+    //CloudEdgeTop = 3,
+    //CloudEdgeBottom = 4,
+    //CloudEdgeLeft = 5,
+    //CloudEdgeRight = 6,
+
+    //CloudCornerTopLeft = 7,
+    //CloudCornerTopRight = 8,
+    //CloudCornerBottomLeft = 9,
+    //CloudCornerBottomRight = 10,
 
     // This is how the map will be generated
     private readonly int[,] mapOutline =
     {
-            { 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 },
-            { 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
-            { 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 2 },
-            { 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
-            { 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 }
+            {11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11 },
+            {11, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,11 },
+            {11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,11 },
+            {11, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0,11 },
+            {11, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,11 },
+            {99, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 2, 0, 0,11 },
+            {11, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,11 },
+            {11, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,11 },
+            {11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,11 },
+            {11, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,11 },
+            {11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11 }
     };
 
     // Start is called before the first frame update
     void Start()
     {
-		Time.timeScale = 1f;
+        Time.timeScale = 1f;
 
-		// If there are no prefabs, don't start the game.
-		if (towerPrefabs == null || towerPrefabs.Length == 0)
+        // If there are no prefabs, don't start the game.
+        if (towerPrefabs == null || towerPrefabs.Length == 0)
         {
             throw new InvalidOperationException("Cannot begin the game with no tower prefabs.");
         }
 
-		// Populate tower and enemy prefab dictionary with all the tower and enemy 
-		//prefabs created in the inspector.
+        // Populate tower and enemy prefab dictionary with all the tower and enemy 
+        //prefabs created in the inspector.
         towerPrefabDictionary = new Dictionary<TowerType, GameObject>();
         for (int i = 0; i < towerPrefabs.Length; i++)
         {
@@ -168,15 +216,15 @@ public class MapManager : MonoBehaviour
             towerPrefabDictionary.Add(pta.towerType, pta.towerGameObject);
         }
 
-		enemyPrefabDictionary = new Dictionary<EnemyType, GameObject>();
-		for (int i = 0; i < enemyPrefabs.Length; i++)
-		{
-			// Prefab to add
-			EnemyPrefab pta = enemyPrefabs[i];
-			enemyPrefabDictionary.Add(pta.enemyType, pta.enemyGameObject);
-		}
+        enemyPrefabDictionary = new Dictionary<EnemyType, GameObject>();
+        for (int i = 0; i < enemyPrefabs.Length; i++)
+        {
+            // Prefab to add
+            EnemyPrefab pta = enemyPrefabs[i];
+            enemyPrefabDictionary.Add(pta.enemyType, pta.enemyGameObject);
+        }
 
-		towerContainer = new GameObject("Towers").transform;
+        towerContainer = new GameObject("Towers").transform;
 
         towers = new List<Entity>();
         enemiesOnScreen = new List<Entity>();
@@ -198,7 +246,7 @@ public class MapManager : MonoBehaviour
         // Find a target for all towers and enemies
         for (int i = 0; i < towers.Count; i++)
         {
-			((Tower)towers[i]).FindTarget(enemiesOnScreen);
+            ((Tower)towers[i]).FindTarget(enemiesOnScreen);
         }
         for (int i = 0; i < enemiesOnScreen.Count; i++)
         {
@@ -208,7 +256,7 @@ public class MapManager : MonoBehaviour
                 enemiesOnScreen.RemoveAt(i);
                 i--;
                 continue;
-            } 
+            }
             ((Enemy)enemiesOnScreen[i]).FindTarget(towers.Where(t => t.gameObject.activeInHierarchy).ToList());
         }
     }
@@ -218,7 +266,7 @@ public class MapManager : MonoBehaviour
     // ------------------------------------
 
     /// <summary>
-    /// Centers the camera to the map
+    /// Positions the camera correctly
     /// </summary>
     private void CenterCamera()
     {
@@ -230,7 +278,7 @@ public class MapManager : MonoBehaviour
         float furthestRight = GetPositionAtMapCoordinate(columns - 1, 0).x;
         float furthestUp = GetPositionAtMapCoordinate(0, rows - 1).y;
 
-        Camera.main.transform.position = new Vector3(furthestRight / 2.0f, furthestUp / 2.0f, Camera.main.transform.position.z);
+        Camera.main.transform.position = new Vector3(furthestRight / 2.0f, furthestUp / 2.0f + .75f, Camera.main.transform.position.z);
     }
 
     /// <summary>
@@ -289,10 +337,44 @@ public class MapManager : MonoBehaviour
                         newMapSquare = Instantiate(pathTile, mapParent.transform);
                         break;
                     case MapTiles.Base:
+                        newMapSquare = Instantiate(pathTile, mapParent.transform);
+                        newMapSquare.transform.position = new Vector3(j, i);
+                        newMapSquare.name += $" at index {i}, {j}";
                         newMapSquare = Instantiate(baseTile, mapParent.transform);
                         newMapSquare.GetComponent<Base>().mapManager = gameObject;
                         playerBase = newMapSquare;
                         break;
+                    #region Cloud Cases
+
+                    case MapTiles.CloudEdgeTop:
+                        newMapSquare = Instantiate(CloudEdgeBottom, mapParent.transform);
+                        break;
+                    case MapTiles.CloudEdgeBottom:
+                        newMapSquare = Instantiate(CloudEdgeTop, mapParent.transform);
+                        break;
+                    case MapTiles.CloudEdgeRight:
+                        newMapSquare = Instantiate(CloudEdgeRight, mapParent.transform);
+                        break;
+                    case MapTiles.CloudEdgeLeft:
+                        newMapSquare = Instantiate(CloudEdgeLeft, mapParent.transform);
+                        break;
+
+                    case MapTiles.CloudCornerTopRight:
+                        newMapSquare = Instantiate(CloudCornerBottomRight, mapParent.transform);
+                        break;
+                    case MapTiles.CloudCornerTopLeft:
+                        newMapSquare = Instantiate(CloudCornerBottomLeft, mapParent.transform);
+                        break;
+                    case MapTiles.CloudCornerBottomRight:
+                        newMapSquare = Instantiate(CloudCornerTopRight, mapParent.transform);
+                        break;
+                    case MapTiles.CloudCornerBottomLeft:
+                        newMapSquare = Instantiate(CloudCornerTopLeft, mapParent.transform);
+                        break;
+
+                    case MapTiles.ActuallyEmpty:
+                        continue;
+                    #endregion
                     default:
                         throw new InvalidOperationException(
                             $"Invalid map square specified : '{mapOutline[i, j]}' at coordinate {i}, {j}");
@@ -313,7 +395,7 @@ public class MapManager : MonoBehaviour
     public bool PlaceTower(Vector3 position, TowerType towerType)
     {
         Vector2Int mapCoords = GetMapCoordinateAtWorldPosition(position);
-		return PlaceTower(mapCoords.x, mapCoords.y, towerType);
+        return PlaceTower(mapCoords.x, mapCoords.y, towerType);
     }
 
     /// <summary>
@@ -331,7 +413,7 @@ public class MapManager : MonoBehaviour
             || mapOutline[y, x] != (int)MapTiles.Empty)
         {
             // TODO: Give player feedback that tower placement failed
-            Debug.Log("Tower placement failed");
+            //Debug.Log("Tower placement failed");
             return false;
         }
 
@@ -340,12 +422,14 @@ public class MapManager : MonoBehaviour
         newTower.transform.position = GetPositionAtMapCoordinate(x, y)
             + new Vector3(0, 0, -1);
 
-		// Grab tower component
-		Tower towerScript = newTower.GetComponent<Tower>();
-		if (towerScript is SpecialTower)
-		{
-			((SpecialTower)towerScript).mode = towerType;
-		}
+        // Grab tower component
+        Tower towerScript = newTower.GetComponent<Tower>();
+        if (towerScript is SpecialTower)
+        {
+            ((SpecialTower)towerScript).mode = towerType;
+        }
+
+        towerScript.shootNoiseSource = soundSource;
 
         // Name it accordingly
         newTower.name = $"{towerType.ToString()} tower at position {x}, {y}.";
@@ -357,8 +441,8 @@ public class MapManager : MonoBehaviour
         // Update towerGrid to reflect new tower
         towerGrid[y, x] = new TowerGridSpace(towerType, newTower);
 
-		// A tower was placed
-		return true;
+        // A tower was placed
+        return true;
     }
 
     /// <summary>
@@ -371,7 +455,7 @@ public class MapManager : MonoBehaviour
         Vector2Int mapCoords = GetMapCoordinateAtWorldPosition(position);
         return RemoveTower(mapCoords.x, mapCoords.y);
     }
-    
+
     /// <summary>
     /// Removes the tower at map coordinate x, y
     /// </summary>
@@ -409,10 +493,10 @@ public class MapManager : MonoBehaviour
     {
         int basicEnemies = currentWave % 4 + currentWave / 4;
         int buffEnemies = currentWave / 4;
-		int speedyEnemies = currentWave / 8;
-		int thiefEnemies = currentWave / 12;
+        int speedyEnemies = currentWave / 8;
+        int thiefEnemies = currentWave / 12;
 
-		
+
 
         currentWaveEnemies = CreateWave(basicEnemies, buffEnemies, speedyEnemies, thiefEnemies);
         StartCoroutine(SpawnEnemy());
@@ -428,7 +512,7 @@ public class MapManager : MonoBehaviour
         List<Enemy> enemies = new List<Enemy>();
         for (int i = 0; i < basicEnemies; i++)
         {
-			enemies.Add(enemyPrefabDictionary[EnemyType.Basic].GetComponent<Enemy>());
+            enemies.Add(enemyPrefabDictionary[EnemyType.Basic].GetComponent<Enemy>());
         }
         for (int i = 0; i < thiefEnemies; i++)
         {
@@ -437,11 +521,11 @@ public class MapManager : MonoBehaviour
         for (int i = 0; i < buffEnemies; i++)
         {
             enemies.Add(enemyPrefabDictionary[EnemyType.Buff].GetComponent<Enemy>());
-		}
-		for (int i = 0; i < speedyEnemies; i++)
-		{
-			enemies.Add(enemyPrefabDictionary[EnemyType.Speedy].GetComponent<Enemy>());
-		}
+        }
+        for (int i = 0; i < speedyEnemies; i++)
+        {
+            enemies.Add(enemyPrefabDictionary[EnemyType.Speedy].GetComponent<Enemy>());
+        }
 
         enemies = enemies.OrderBy(x => UnityEngine.Random.value * 100).ToList();
 
@@ -464,10 +548,11 @@ public class MapManager : MonoBehaviour
         yield return new WaitForSeconds(secondsPerEnemy);
 
         // Spawn a new enemy after waiting secondsPerEnemy seconds
-        
+
         GameObject newEnemy = Instantiate(currentWaveEnemies.Dequeue().gameObject);
-        newEnemy.transform.position = GetPositionAtMapCoordinate(0,2);
-		newEnemy.GetComponent<Enemy>().SetMap(this.mapOutline);		
+        newEnemy.transform.position = enemySpawnPosition;
+        newEnemy.GetComponent<Enemy>().SetMap(this.mapOutline);
+        newEnemy.GetComponent<Enemy>().shootNoiseSource = soundSource;
         enemiesOnScreen.Add(newEnemy.GetComponent<Enemy>());
         newEnemy.GetComponent<Enemy>().GainHealth(currentWave / 2);
 
@@ -487,10 +572,11 @@ public class MapManager : MonoBehaviour
 
     private IEnumerator WaitThenSpawnNextWave()
     {
-		yield return new WaitUntil(()=>{
-			return enemiesOnScreen.Count < 1;
-		});
+        yield return new WaitUntil(() =>
+        {
+            return enemiesOnScreen.Count < 1;
+        });
         StartWave();
     }
-	
+
 }

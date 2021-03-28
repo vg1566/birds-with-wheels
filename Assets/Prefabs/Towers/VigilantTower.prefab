@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4925036005789944353}
   - component: {fileID: 8793770749149032413}
   - component: {fileID: 3494649564491309828}
-  - component: {fileID: 6938522666137524738}
+  - component: {fileID: 8267324654808663303}
   - component: {fileID: 4076756816662227647}
   m_Layer: 0
   m_Name: VigilantTower
@@ -73,8 +73,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: a519c32bae18c1c44a32d6f1ddc3251a, type: 3}
-  m_Color: {r: 0.7853535, g: 0.5990566, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 3ade9fcacd2446c4ca6d8f75b1d23371, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -105,7 +105,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!61 &6938522666137524738
+--- !u!61 &8267324654808663303
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -129,7 +129,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.16, y: 0.16}
+  m_Size: {x: 2.56, y: 2.56}
   m_EdgeRadius: 0
 --- !u!114 &4076756816662227647
 MonoBehaviour:
@@ -148,7 +148,9 @@ MonoBehaviour:
   attackPower: 1
   range: 6
   rateOfFire: 1
-  projectilePrefab: {fileID: 3213211799076024093, guid: f96f89cb6956dc844b1ef346c665d4cc,
+  shootNoise: {fileID: 8300000, guid: 127cfc9203ca2bb43b7a2ad655f5aeac, type: 3}
+  shootNoiseSource: {fileID: 0}
+  projectilePrefab: {fileID: 3213211799076024093, guid: d080c80edf3c4e844aad79c5f17de4d7,
     type: 3}
   baseVar: {fileID: 0}
   canFire: 1

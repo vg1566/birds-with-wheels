@@ -42,6 +42,7 @@ public class Tower : AttackingEntity
         projectileEntity.damage = attackPower;
         projectileEntity.target = this.target.gameObject;
 
+        base.FireProjectile();
     }
 
     protected override void Die()

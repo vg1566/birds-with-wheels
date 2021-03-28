@@ -27,7 +27,7 @@ public class SpecialTower : Tower
             if (resourceTimer > secondsPerResourceGain)
             {
                 resourceTimer = 0;
-                Debug.Log("Add Resources");
+                //Debug.Log("Add Resources");
                 player.numBirds++;
                 player.numWheels++;
             }

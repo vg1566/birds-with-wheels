@@ -31,7 +31,7 @@ public class Projectile : MonoBehaviour
 		//point at target
 		direction = (targetPos - this.transform.position).normalized;
 
-		Debug.DrawLine(transform.position, direction * speed);
+		//Debug.DrawLine(transform.position, direction * speed);
 		//move towards target
 		transform.Translate(direction * speed * Time.deltaTime);
     }

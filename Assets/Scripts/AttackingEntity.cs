@@ -21,6 +21,12 @@ public abstract class AttackingEntity : Entity
     /// </summary>
     protected Entity target;
 
+    [SerializeField]
+    protected AudioClip shootNoise;
+
+    [HideInInspector]
+    public AudioSource shootNoiseSource;
+
     /// <summary>
     /// Chooses a target based on proximity (for attacking towers/enemies) 
     /// or priority (enemies prioritize the avatar)
@@ -48,5 +54,11 @@ public abstract class AttackingEntity : Entity
     /// <summary>
     /// Fires a projectile from this entity's position towards Target
     /// </summary>
-    protected abstract void FireProjectile();
+    protected virtual void FireProjectile()
+    {
+        if (shootNoise != null)
+        {
+            shootNoiseSource.PlayOneShot(shootNoise);
+        }
+    }
 }

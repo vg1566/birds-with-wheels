@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7401537789786163616}
   - component: {fileID: 6406100707534203996}
   - component: {fileID: 1338070483025895557}
-  - component: {fileID: 4801999227617302915}
+  - component: {fileID: 1540803702805105235}
   - component: {fileID: 1908745558752110910}
   m_Layer: 0
   m_Name: BuffTower
@@ -73,8 +73,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: a519c32bae18c1c44a32d6f1ddc3251a, type: 3}
-  m_Color: {r: 0.69834995, g: 1, b: 0.4669811, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 78f52a83c99f4f941a15c20a95bb17e4, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -105,7 +105,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!61 &4801999227617302915
+--- !u!61 &1540803702805105235
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -129,7 +129,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.16, y: 0.16}
+  m_Size: {x: 2.56, y: 2.56}
   m_EdgeRadius: 0
 --- !u!114 &1908745558752110910
 MonoBehaviour:
@@ -148,7 +148,9 @@ MonoBehaviour:
   attackPower: 1
   range: 3
   rateOfFire: 1
-  projectilePrefab: {fileID: 3213211799076024093, guid: f96f89cb6956dc844b1ef346c665d4cc,
+  shootNoise: {fileID: 8300000, guid: 214b8dbb1e0af4543a761a9cb3323611, type: 3}
+  shootNoiseSource: {fileID: 0}
+  projectilePrefab: {fileID: 3213211799076024093, guid: 7de3ef84c7f801a42af78339a8908396,
     type: 3}
   baseVar: {fileID: 0}
   canFire: 1

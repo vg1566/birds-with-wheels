@@ -78,6 +78,8 @@ public class Enemy : AttackingEntity
 		Projectile projectileEntity = projectileObject.GetComponent<Projectile>();
 		projectileEntity.damage = attackPower;
 		projectileEntity.target = this.target.gameObject;
+
+		base.FireProjectile();
 	}
 
 	/// <summary>

@@ -39,6 +39,7 @@ public class Base : Entity
         fullHealthBar = Instantiate(healthBarPrefab, hpPosition, Quaternion.identity);
         healthBar = Instantiate(healthBarPrefab, hpPosition, Quaternion.identity);
         fullHealthBar.GetComponent<SpriteRenderer>().color = Color.black;
+        fullHealthBar.GetComponent<SpriteRenderer>().sortingOrder = 123712;
         healthBar.GetComponent<SpriteRenderer>().color = Color.red;
     }
 
