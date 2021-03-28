@@ -146,8 +146,14 @@ MonoBehaviour:
   hp: 10
   speed: 0
   position: {x: 0, y: 0, z: 0}
+  maxHp: 0
+  m_Red: 0
   gameOver: 0
   avatarPrefab: {fileID: 3624725204305388048, guid: d3664a38c65674b4e9c69b08cbd58f9c,
     type: 3}
   currentAvatar: {fileID: 0}
   mapManager: {fileID: 0}
+  healthBarPrefab: {fileID: 4445328126094647366, guid: 6d22bea05fa50cb47974365480852325,
+    type: 3}
+  healthBar: {fileID: 0}
+  fullHealthBar: {fileID: 0}
