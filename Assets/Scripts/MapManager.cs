@@ -217,6 +217,9 @@ public class MapManager : MonoBehaviour
     // --------  HELPER FUNCTIONS  --------
     // ------------------------------------
 
+    /// <summary>
+    /// Centers the camera to the map
+    /// </summary>
     private void CenterCamera()
     {
         int rows = mapOutline.GetLength(0);
@@ -404,7 +407,7 @@ public class MapManager : MonoBehaviour
     /// </summary>
     private void StartWave()
     {
-        int basicEnemies = currentWave % 4;
+        int basicEnemies = currentWave % 4 + currentWave / 4;
         int buffEnemies = currentWave / 4;
 		int speedyEnemies = currentWave / 8;
 		int thiefEnemies = currentWave / 12;
@@ -422,25 +425,33 @@ public class MapManager : MonoBehaviour
     /// <returns>A stack with the specified amount of enemies</returns>
     private Queue<Enemy> CreateWave(int basicEnemies = 0, int buffEnemies = 0, int speedyEnemies = 0, int thiefEnemies = 0)
     {
-        Queue<Enemy> enemies = new Queue<Enemy>();
+        List<Enemy> enemies = new List<Enemy>();
         for (int i = 0; i < basicEnemies; i++)
         {
-			enemies.Enqueue(enemyPrefabDictionary[EnemyType.Basic].GetComponent<Enemy>());
+			enemies.Add(enemyPrefabDictionary[EnemyType.Basic].GetComponent<Enemy>());
+        }
+        for (int i = 0; i < thiefEnemies; i++)
+        {
+            enemies.Add(enemyPrefabDictionary[EnemyType.Thief].GetComponent<Enemy>());
         }
         for (int i = 0; i < buffEnemies; i++)
         {
-            enemies.Enqueue(enemyPrefabDictionary[EnemyType.Buff].GetComponent<Enemy>());
+            enemies.Add(enemyPrefabDictionary[EnemyType.Buff].GetComponent<Enemy>());
 		}
 		for (int i = 0; i < speedyEnemies; i++)
 		{
-			enemies.Enqueue(enemyPrefabDictionary[EnemyType.Speedy].GetComponent<Enemy>());
-		}
-		for (int i = 0; i < thiefEnemies; i++)
-		{
-			enemies.Enqueue(enemyPrefabDictionary[EnemyType.Thief].GetComponent<Enemy>());
+			enemies.Add(enemyPrefabDictionary[EnemyType.Speedy].GetComponent<Enemy>());
 		}
 
-		return enemies;
+        enemies = enemies.OrderBy(x => UnityEngine.Random.value * 100).ToList();
+
+        Queue<Enemy> enemiesQueue = new Queue<Enemy>();
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            enemiesQueue.Enqueue(enemies[i]);
+        }
+
+        return enemiesQueue;
     }
 
     /// <summary>
@@ -458,8 +469,7 @@ public class MapManager : MonoBehaviour
         newEnemy.transform.position = GetPositionAtMapCoordinate(0,2);
 		newEnemy.GetComponent<Enemy>().SetMap(this.mapOutline);		
         enemiesOnScreen.Add(newEnemy.GetComponent<Enemy>());
-        //newEnemy.GetComponent<Enemy>().mapManager = this;
-        //newEnemy.GetComponent<Enemy>().SetMap(mapOutline);
+        newEnemy.GetComponent<Enemy>().GainHealth(currentWave / 2);
 
         // Only continue to spawn enemies 
         // if there are more to spawn.
