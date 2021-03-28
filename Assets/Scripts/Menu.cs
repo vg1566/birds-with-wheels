@@ -9,6 +9,9 @@ public class Menu : MonoBehaviour
     public static bool isPaused = false;
     public GameObject pauseMenu;
     public GameObject gameOverMenu;
+    public GameObject instructionsMenu;
+    public GameObject enemiesMenu;
+    public GameObject controlsMenu;
     public TextMeshProUGUI scoreText;
 	public GameObject mapman;
 	public Base playerBase;
@@ -50,6 +53,9 @@ public class Menu : MonoBehaviour
     public void Resume()
     {
         pauseMenu.SetActive(false);
+        instructionsMenu.SetActive(false);
+        enemiesMenu.SetActive(false);
+        controlsMenu.SetActive(false);
         Time.timeScale = 1f;
         isPaused = false;
     }
