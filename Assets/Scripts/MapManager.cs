@@ -427,6 +427,7 @@ public class MapManager : MonoBehaviour
         if (towerScript is SpecialTower)
         {
             ((SpecialTower)towerScript).mode = towerType;
+            ((SpecialTower)towerScript).ResolveSprite();
         }
 
         towerScript.shootNoiseSource = soundSource;

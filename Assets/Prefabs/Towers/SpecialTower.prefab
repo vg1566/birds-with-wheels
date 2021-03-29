@@ -156,3 +156,5 @@ MonoBehaviour:
   canFire: 1
   mode: 1
   player: {fileID: 0}
+  defenseSprite: {fileID: 21300000, guid: 0b409fb936b25464298bffe54701679a, type: 3}
+  offenseSprite: {fileID: 21300000, guid: 72ff733883ff24f43a753e470f227523, type: 3}

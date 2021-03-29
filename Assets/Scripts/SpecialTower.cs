@@ -12,10 +12,27 @@ public class SpecialTower : Tower
 
     private float resourceTimer = 0f;
     private float secondsPerResourceGain = 4f;
+
+    [SerializeField]
+    private Sprite defenseSprite;
+    [SerializeField]
+    private Sprite offenseSprite;
+
+    private bool spriteSwitched;
+
     // Start is called before the first frame update
     void Start()
     {
         player = GameObject.FindWithTag("Player").GetComponent<Avatar>();
+    }
+
+    public void ResolveSprite()
+    {
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        if (mode == TowerType.SpecialDefense)
+            sr.sprite = defenseSprite;
+        else
+            sr.sprite = offenseSprite;
     }
 
     // Update is called once per frame
