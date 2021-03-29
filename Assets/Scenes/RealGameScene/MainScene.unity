@@ -542,6 +542,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1739122259}
     m_Modifications:
+    - target: {fileID: 1944872044253590705, guid: be2d5dfefb9fc2e4cb024a7a45ac12af,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7713992754769984376}
+    - target: {fileID: 1944872044253590705, guid: be2d5dfefb9fc2e4cb024a7a45ac12af,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetActive
+      objectReference: {fileID: 0}
     - target: {fileID: 1944872044324739220, guid: be2d5dfefb9fc2e4cb024a7a45ac12af,
         type: 3}
       propertyPath: m_text
@@ -661,6 +671,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1944872044443796508, guid: be2d5dfefb9fc2e4cb024a7a45ac12af,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 479286569}
+    - target: {fileID: 1944872044443796508, guid: be2d5dfefb9fc2e4cb024a7a45ac12af,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetActive
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: be2d5dfefb9fc2e4cb024a7a45ac12af, type: 3}
@@ -974,6 +994,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 366905566}
   m_CullTransparentMesh: 0
+--- !u!1 &376738689 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1944872044347212399, guid: be2d5dfefb9fc2e4cb024a7a45ac12af,
+    type: 3}
+  m_PrefabInstance: {fileID: 221472343}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &479286569 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8823379195874568760, guid: 5b979b2b8226099478a17fbdc2ed6abb,
+    type: 3}
+  m_PrefabInstance: {fileID: 546971083}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1064,6 +1096,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1739122259}
     m_Modifications:
+    - target: {fileID: 8823379194693891223, guid: 5b979b2b8226099478a17fbdc2ed6abb,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2002153079}
+    - target: {fileID: 8823379194693891223, guid: 5b979b2b8226099478a17fbdc2ed6abb,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetActive
+      objectReference: {fileID: 0}
+    - target: {fileID: 8823379195865617468, guid: 5b979b2b8226099478a17fbdc2ed6abb,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 376738689}
+    - target: {fileID: 8823379195865617468, guid: 5b979b2b8226099478a17fbdc2ed6abb,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetActive
+      objectReference: {fileID: 0}
     - target: {fileID: 8823379195874568760, guid: 5b979b2b8226099478a17fbdc2ed6abb,
         type: 3}
       propertyPath: m_Name
@@ -2560,7 +2612,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 479286569}
         m_MethodName: SetActive
         m_Mode: 6
         m_Arguments:
@@ -2818,9 +2870,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 2002153079}
   gameOverMenu: {fileID: 2111717469}
-  instructionsMenu: {fileID: 0}
-  enemiesMenu: {fileID: 0}
-  controlsMenu: {fileID: 0}
+  instructionsMenu: {fileID: 479286569}
+  enemiesMenu: {fileID: 376738689}
+  controlsMenu: {fileID: 7713992754769984376}
   scoreText: {fileID: 1547221408}
   mapman: {fileID: 308288981}
   playerBase: {fileID: 0}
@@ -3419,7 +3471,7 @@ RectTransform:
   m_Children:
   - {fileID: 5112687632376498301}
   m_Father: {fileID: 7713992754769984383}
-  m_RootOrder: 21
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3609,7 +3661,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7713992754769984383}
-  m_RootOrder: 16
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3646,7 +3698,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7713992754769984383}
-  m_RootOrder: 18
+  m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3896,7 +3948,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7713992754769984383}
-  m_RootOrder: 13
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3989,7 +4041,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7713992754769984383}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4347,7 +4399,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7713992754769984383}
-  m_RootOrder: 14
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4667,6 +4719,7 @@ RectTransform:
   - {fileID: 7713992754520111557}
   - {fileID: 7713992755592813752}
   - {fileID: 7713992755173234544}
+  - {fileID: 5112687633401031392}
   - {fileID: 7713992755496678666}
   - {fileID: 7713992754131220572}
   - {fileID: 7713992755336919508}
@@ -4678,7 +4731,6 @@ RectTransform:
   - {fileID: 7713992753845052328}
   - {fileID: 7713992755885451650}
   - {fileID: 7713992755050733614}
-  - {fileID: 5112687633401031392}
   m_Father: {fileID: 1739122259}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4861,7 +4913,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7713992754769984383}
-  m_RootOrder: 17
+  m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -5002,7 +5054,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7713992754769984383}
-  m_RootOrder: 20
+  m_RootOrder: 21
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -5279,7 +5331,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 376738689}
         m_MethodName: SetActive
         m_Mode: 6
         m_Arguments:
@@ -5401,7 +5453,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7713992754769984383}
-  m_RootOrder: 15
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -5446,7 +5498,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7713992754769984383}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -5827,7 +5879,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7713992754769984383}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -6167,7 +6219,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7713992754769984383}
-  m_RootOrder: 19
+  m_RootOrder: 20
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
